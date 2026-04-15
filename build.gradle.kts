@@ -11,14 +11,14 @@ kotlin {
 
 repositories {
     mavenCentral()
-    mavenLocal()
+    maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("com.logfriends:log-friends-sdk:1.0.0")
+    implementation("com.github.log-freind:log-friends-sdk:v1.0.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
     testImplementation("org.junit.platform:junit-platform-launcher:1.10.1")
