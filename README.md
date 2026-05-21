@@ -24,18 +24,13 @@ The example path uses the SDK library, HTTP ingest, and the Console without a se
 
 ## Run Full Stack
 
-Start infrastructure and console:
-
-```bash
-cd path/to/log-friends
-docker compose -f docker-compose.infra.yml up -d
-docker compose -f docker-compose.platform.yml up -d --build
-```
+Start a Console that can receive ingest requests at `http://localhost:8082/ingest` first.
 
 Run the example app:
 
 ```bash
-cd path/to/log-friends/log-friends-examples
+git clone https://github.com/log-freind/log-friends-examples.git
+cd log-friends-examples
 LOGFRIENDS_INGEST_URL=http://localhost:8082/ingest \
 ./gradlew bootRun --args='--server.port=8081'
 ```
