@@ -8,13 +8,13 @@ import org.springframework.stereotype.Service
 class PaymentService {
     private val log = LoggerFactory.getLogger(PaymentService::class.java)
 
-    @LogEvent("payment.processed")
+    @LogEvent("paymentProcessed")
     fun processPayment(orderId: String, amount: Int, method: String): String {
         log.info("Processing payment for order {} via {}", orderId, method)
         return "TX-" + System.currentTimeMillis()
     }
 
-    @LogEvent("payment.refunded")
+    @LogEvent("paymentRefunded")
     fun refund(txId: String, reason: String) {
         log.info("Refunding transaction {}, reason: {}", txId, reason)
     }

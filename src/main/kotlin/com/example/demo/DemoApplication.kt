@@ -1,11 +1,7 @@
 package com.example.demo
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
-
-@SpringBootApplication
+/**
+ * Kept only as a Kotlin package anchor. The Java main class is used so IDE
+ * Spring Boot dashboards can discover the example application reliably.
+ */
 class DemoApplication
-
-fun main(args: Array<String>) {
-    runApplication<DemoApplication>(*args)
-}

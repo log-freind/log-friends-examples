@@ -5,16 +5,20 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
-class OrderService {
+class OrderService(
+    private val orderAuditRepository: OrderAuditRepository
+) {
     private val log = LoggerFactory.getLogger(OrderService::class.java)
 
-    @LogEvent("order.created")
+    @LogEvent("orderCreated")
     fun create(productId: String, quantity: Int, userId: String): String {
         log.info("Creating order for product {}, user {}", productId, userId)
-        return "ORD-" + System.currentTimeMillis()
+        val orderId = "ORD-" + System.currentTimeMillis()
+        orderAuditRepository.recordCreated(orderId, productId, quantity, userId)
+        return orderId
     }
 
-    @LogEvent("order.cancelled")
+    @LogEvent("orderCancelled")
     fun cancel(orderId: String, reason: String) {
         log.warn("Canceling order {}, reason: {}", orderId, reason)
     }
