@@ -12,7 +12,7 @@ log-friends-examples
   -> TimescaleDB
 ```
 
-Kafka, Protobuf transport, and a separate java-agent JAR are not used in the current example flow.
+The example path uses the SDK library, HTTP ingest, and the Console without a separate java-agent JAR.
 
 ## Domains
 
@@ -27,7 +27,7 @@ Kafka, Protobuf transport, and a separate java-agent JAR are not used in the cur
 Start infrastructure and console:
 
 ```bash
-cd /Users/choeseonghyeon/Desktop/log-friends
+cd path/to/log-friends
 docker compose -f docker-compose.infra.yml up -d
 docker compose -f docker-compose.platform.yml up -d --build
 ```
@@ -35,7 +35,7 @@ docker compose -f docker-compose.platform.yml up -d --build
 Run the example app:
 
 ```bash
-cd /Users/choeseonghyeon/Desktop/log-friends/log-friends-examples
+cd path/to/log-friends/log-friends-examples
 LOGFRIENDS_INGEST_URL=http://localhost:8082/ingest \
 ./gradlew bootRun --args='--server.port=8081'
 ```
