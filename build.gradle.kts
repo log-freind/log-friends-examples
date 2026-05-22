@@ -1,8 +1,8 @@
 plugins {
     kotlin("jvm") version "2.3.20"
     kotlin("plugin.spring") version "2.3.20"
-    id("org.springframework.boot") version "3.4.0"
-    id("io.spring.dependency-management") version "1.1.6"
+    id("org.springframework.boot") version "3.5.9"
+    id("io.spring.dependency-management") version "1.1.7"
 }
 
 kotlin {
@@ -17,11 +17,13 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("com.github.log-freind:log-friends-sdk:v1.1.0")
+    implementation("com.github.log-freind:log-friends-sdk:v1.3.0")
+    runtimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
-    testImplementation("org.junit.platform:junit-platform-launcher:1.10.1")
+    testImplementation("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.test {
@@ -30,5 +32,5 @@ tasks.test {
 }
 
 springBoot {
-    mainClass.set("com.example.demo.DemoApplicationKt")
+    mainClass.set("com.example.demo.ExamplesApplication")
 }
