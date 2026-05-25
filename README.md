@@ -32,16 +32,16 @@ This branch uses the SDK `main` baseline that enforces required configuration, c
 
 ```bash
 export LOGFRIENDS_WORKER_ID=order-service-local-1
-export LOGFRIENDS_INGEST_URL=http://localhost:8082/ingest
+export LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest
 ```
 
 `workerId` identifies the running app instance. Do not generate a new value on every run if you want Console Agent metadata and statistics to stay connected.
 
-`application.properties` keeps `order-service-local-1` and `http://localhost:8082/ingest` as local example fallbacks. Set the environment variables explicitly when verifying Console integration.
+`application.properties` keeps `order-service-local-1` and `http://localhost:8080/ingest` as local example fallbacks. Set the environment variables explicitly when verifying Console integration.
 
 ## Run With Console
 
-Start a Console that can receive ingest requests at `http://localhost:8082/ingest` first.
+Start a Console that can receive ingest requests at `http://localhost:8080/ingest` first.
 
 Run the example app:
 
@@ -49,7 +49,7 @@ Run the example app:
 git clone https://github.com/log-freind/log-friends-examples.git
 cd log-friends-examples
 LOGFRIENDS_WORKER_ID=order-service-local-1 \
-LOGFRIENDS_INGEST_URL=http://localhost:8082/ingest \
+LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest \
 ./gradlew bootRun --args='--server.port=8081'
 ```
 
@@ -58,7 +58,7 @@ Run a packaged JAR:
 ```bash
 ./gradlew bootJar
 LOGFRIENDS_WORKER_ID=order-service-local-1 \
-LOGFRIENDS_INGEST_URL=http://localhost:8082/ingest \
+LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest \
 java -Djdk.attach.allowAttachSelf=true \
      -jar build/libs/log-friends-examples-*.jar
 ```
@@ -173,7 +173,7 @@ Console owns Agent registration, LogSpec upsert, Raw Event storage, Log Catalog 
 | `spring.application.name` | `order-service` | Example app name |
 | `server.port` | `8081` | Example app port |
 | `logfriends.worker.id` | `order-service-local-1` | Fixed local Worker identifier |
-| `logfriends.ingest.url` | `http://localhost:8082/ingest` | Console ingest endpoint |
+| `logfriends.ingest.url` | `http://localhost:8080/ingest` | Console ingest endpoint |
 | `logfriends.trace.threshold.ms` | `0` | Show METHOD_TRACE in short example calls |
 
 | Environment variable | Description |
