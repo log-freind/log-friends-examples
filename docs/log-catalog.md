@@ -47,31 +47,79 @@ curl -X PUT http://localhost:8082/api/log-specs/by-agent/<agentId> \
       {
         "name": "orderCreated",
         "description": "Order creation business eventName",
+        "apiMethod": "POST",
+        "apiPath": "/orders",
+        "apiDescription": "Creates an order from an OrderRequest DTO",
         "levels": ["INFO"],
         "category": "BUSINESS",
         "fields": [
-          {"name":"request","type":"JSON","required":true,"description":"OrderRequest DTO object. SDK keeps DTO parameters as object values instead of flattening fields"}
+          {"name":"request","type":"JSON","required":true,"description":"OrderRequest DTO object. Includes productId, quantity, customerEmail, and couponCode when present. SDK keeps DTO parameters as object values instead of flattening fields"}
+        ]
+      },
+      {
+        "name": "orderCancelled",
+        "description": "Order cancellation business eventName",
+        "apiMethod": "DELETE",
+        "apiPath": "/orders/{orderId}",
+        "apiDescription": "Cancels an existing order with a reason",
+        "levels": ["WARN"],
+        "category": "BUSINESS",
+        "fields": [
+          {"name":"orderId","type":"STRING","required":true,"description":"Cancelled order identifier"},
+          {"name":"reason","type":"STRING","required":true,"description":"Human-readable cancellation reason"}
         ]
       },
       {
         "name": "paymentProcessed",
         "description": "Payment processed business eventName",
+        "apiMethod": "POST",
+        "apiPath": "/payments",
+        "apiDescription": "Processes a payment for an order",
         "levels": ["INFO"],
         "category": "BUSINESS",
         "fields": [
-          {"name":"orderId","type":"STRING","required":true},
-          {"name":"amount","type":"INTEGER","required":true},
-          {"name":"method","type":"STRING","required":true}
+          {"name":"orderId","type":"STRING","required":true,"description":"Order identifier connected to the payment"},
+          {"name":"amount","type":"INT","required":true,"description":"Payment amount in the example request"},
+          {"name":"method","type":"STRING","required":true,"description":"Payment method such as CARD"}
+        ]
+      },
+      {
+        "name": "paymentRefunded",
+        "description": "Payment refund business eventName",
+        "apiMethod": "POST",
+        "apiPath": "/payments/{transactionId}/refund",
+        "apiDescription": "Refunds an existing payment transaction",
+        "levels": ["INFO"],
+        "category": "BUSINESS",
+        "fields": [
+          {"name":"transactionId","type":"STRING","required":true,"description":"Refunded payment transaction identifier"},
+          {"name":"reason","type":"STRING","required":true,"description":"Refund reason"}
         ]
       },
       {
         "name": "userRegistered",
         "description": "User registration business eventName",
+        "apiMethod": "POST",
+        "apiPath": "/users",
+        "apiDescription": "Registers a new example user",
         "levels": ["INFO"],
         "category": "AUDIT",
         "fields": [
-          {"name":"name","type":"STRING","required":true},
-          {"name":"email","type":"STRING","required":true,"description":"SDK sends __MASKED__"}
+          {"name":"name","type":"STRING","required":true,"description":"Registered user display name"},
+          {"name":"email","type":"STRING","required":true,"description":"Registered user email. SDK sends __MASKED__"}
+        ]
+      },
+      {
+        "name": "userDeactivated",
+        "description": "User deactivation business eventName",
+        "apiMethod": "PUT",
+        "apiPath": "/users/{userId}/deactivate",
+        "apiDescription": "Deactivates an example user account",
+        "levels": ["WARN"],
+        "category": "AUDIT",
+        "fields": [
+          {"name":"userId","type":"STRING","required":true,"description":"Deactivated user identifier"},
+          {"name":"reason","type":"STRING","required":true,"description":"Deactivation reason"}
         ]
       }
     ]
@@ -123,6 +171,8 @@ curl 'http://localhost:8082/api/log-catalog/apps/order-service/events?workerId=o
 Check:
 
 - `orderCreated`, `paymentProcessed`, and `userRegistered` are connected by eventName.
+- LogSpec API context appears under the eventName when `apiMethod`, `apiPath`, or `apiDescription` is registered.
+- Field descriptions explain DTO payloads and scalar fields without requiring nested DTO schema support.
 - Recent Sample payloads come from `custom_events`.
 - `userRegistered.email` is masked before display.
 - Events emitted without a registered LogSpec appear as `NO_SPEC`.
