@@ -11,10 +11,10 @@ class OrderService(
     private val log = LoggerFactory.getLogger(OrderService::class.java)
 
     @LogEvent("orderCreated")
-    fun create(productId: String, quantity: Int, userId: String): String {
-        log.info("Creating order for product {}, user {}", productId, userId)
+    fun create(request: OrderRequest): String {
+        log.info("Creating order for product {}, user {}", request.productId, request.userId)
         val orderId = "ORD-" + System.currentTimeMillis()
-        orderAuditRepository.recordCreated(orderId, productId, quantity, userId)
+        orderAuditRepository.recordCreated(orderId, request.productId, request.quantity, request.userId)
         return orderId
     }
 

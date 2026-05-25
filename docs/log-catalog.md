@@ -50,9 +50,7 @@ curl -X PUT http://localhost:8082/api/log-specs/by-agent/<agentId> \
         "levels": ["INFO"],
         "category": "BUSINESS",
         "fields": [
-          {"name":"productId","type":"STRING","required":true,"description":"Product id"},
-          {"name":"quantity","type":"INTEGER","required":true,"description":"Ordered quantity"},
-          {"name":"userId","type":"STRING","required":true,"description":"Purchasing user id"}
+          {"name":"request","type":"JSON","required":true,"description":"OrderRequest DTO object. SDK keeps DTO parameters as object values instead of flattening fields"}
         ]
       },
       {
@@ -131,6 +129,6 @@ Check:
 
 ## 5. See A Mismatch
 
-Add a required `couponId` field to the `orderCreated` LogSpec and upsert it again without changing the example app. The next Catalog response should show a `MISSING_FIELD` mismatch because the sample payload has no `couponId`.
+Add a required top-level `couponId` field to the `orderCreated` LogSpec and upsert it again without changing the example app. The next Catalog response should show a `MISSING_FIELD` mismatch because the sample payload has top-level `request`, not `couponId`.
 
 Field Request belongs to Console state. This example guide does not create Jira, Linear, or GitHub tickets.
