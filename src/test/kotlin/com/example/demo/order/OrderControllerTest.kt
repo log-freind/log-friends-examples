@@ -19,7 +19,7 @@ class OrderControllerTest {
 
     @Test
     fun `POST orders - 유효한 요청은 200과 orderId 반환`() {
-        given(orderService.create("PROD-1", 2, "USR-001")).willReturn("ORD-123")
+        given(orderService.create(OrderRequest("PROD-1", 2, "USR-001"))).willReturn("ORD-123")
 
         mockMvc.perform(
             post("/orders")
@@ -53,7 +53,7 @@ class OrderControllerTest {
 
     @Test
     fun `POST orders - 수량 1이상이면 정상 처리`() {
-        given(orderService.create("PROD-2", 1, "USR-002")).willReturn("ORD-456")
+        given(orderService.create(OrderRequest("PROD-2", 1, "USR-002"))).willReturn("ORD-456")
 
         mockMvc.perform(
             post("/orders")

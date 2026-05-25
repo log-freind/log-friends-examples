@@ -93,13 +93,15 @@ curl -X POST http://localhost:8081/orders \
 
 Expected `LOG_EVENT.eventName`: `orderCreated`
 
-Expected top-level payload fields:
+Expected top-level payload fields. The service receives `OrderRequest` as a DTO, so the SDK keeps it as one object value instead of flattening it:
 
 ```json
 {
-  "productId": "PROD-1",
-  "quantity": 2,
-  "userId": "USR-1"
+  "request": {
+    "productId": "PROD-1",
+    "quantity": 2,
+    "userId": "USR-1"
+  }
 }
 ```
 
@@ -156,7 +158,7 @@ fun register(name: String, @LogMasked email: String): String
 
 The SDK skips invalid `LOG_EVENT.eventName` values and leaves a warning in the target app log. Dotted names such as `user.registered` are intentionally not used by this example.
 
-Method parameter names become top-level `LOG_EVENT.payload` keys. DTOs are not flattened by the SDK contract.
+Method parameter names become top-level `LOG_EVENT.payload` keys. DTOs are not flattened by the SDK contract. For example, `OrderService.create(request: OrderRequest)` is sent as top-level `request`.
 
 ## LogSpec And Log Catalog
 

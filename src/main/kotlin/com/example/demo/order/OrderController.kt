@@ -9,7 +9,7 @@ class OrderController(private val orderService: OrderService) {
 
     @PostMapping
     fun create(@RequestBody request: OrderRequest): ResponseEntity<String> {
-        val orderId = orderService.create(request.productId, request.quantity, request.userId)
+        val orderId = orderService.create(request)
         return ResponseEntity.ok(orderId)
     }
 
