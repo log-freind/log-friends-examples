@@ -2,6 +2,8 @@
 
 Spring Boot example application for the first-phase `log-friends-sdk` flow.
 
+This example uses `log-friends-sdk:v0.3.0`, including startup Agent handshake state and Discovered `LOG_EVENT` candidate reporting.
+
 The app demonstrates runtime capture for five SDK eventTypes:
 
 | eventType | Example source |
@@ -28,16 +30,18 @@ The example path uses the SDK library, HTTP ingest, and the Console without a se
 
 The SDK requires a fixed `workerId` and a Console ingest endpoint.
 
-This branch uses the SDK `main` baseline that enforces required configuration, camelCase `LOG_EVENT.eventName`, and `@LogMasked` handling.
+This branch uses the SDK `v0.3.0` baseline that enforces required configuration, camelCase `LOG_EVENT.eventName`, `@LogMasked` handling, Agent handshake state, and Discovered `LOG_EVENT` candidate reporting.
 
 ```bash
 export LOGFRIENDS_WORKER_ID=order-service-local-1
+export LOGFRIENDS_APP_NAME=order-service
+export LOGFRIENDS_APP_VERSION=examples-v0.3.0
 export LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest
 ```
 
 `workerId` identifies the running app instance. Do not generate a new value on every run if you want Console Agent metadata and statistics to stay connected.
 
-`application.properties` keeps `order-service-local-1` and `http://localhost:8080/ingest` as local example fallbacks. Set the environment variables explicitly when verifying Console integration.
+`application.properties` keeps `order-service-local-1`, `order-service`, and `http://localhost:8080/ingest` as local example fallbacks. Set the environment variables explicitly when verifying Console integration.
 
 ## Run With Console
 
@@ -49,6 +53,8 @@ Run the example app:
 git clone https://github.com/log-freind/log-friends-examples.git
 cd log-friends-examples
 LOGFRIENDS_WORKER_ID=order-service-local-1 \
+LOGFRIENDS_APP_NAME=order-service \
+LOGFRIENDS_APP_VERSION=examples-v0.3.0 \
 LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest \
 ./gradlew bootRun --args='--server.port=8081'
 ```
@@ -58,9 +64,11 @@ Run a packaged JAR:
 ```bash
 ./gradlew bootJar
 LOGFRIENDS_WORKER_ID=order-service-local-1 \
+LOGFRIENDS_APP_NAME=order-service \
+LOGFRIENDS_APP_VERSION=examples-v0.3.0 \
 LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest \
 java -Djdk.attach.allowAttachSelf=true \
-     -jar build/libs/log-friends-examples-*.jar
+     -jar build/libs/log-friends-examples.jar
 ```
 
 ## Run Against A Mock Ingest Endpoint
@@ -75,6 +83,8 @@ In another terminal:
 
 ```bash
 LOGFRIENDS_WORKER_ID=order-service-local-1 \
+LOGFRIENDS_APP_NAME=order-service \
+LOGFRIENDS_APP_VERSION=examples-v0.3.0 \
 LOGFRIENDS_INGEST_URL=http://127.0.0.1:8089/ingest \
 ./gradlew bootRun --args='--server.port=8081'
 ```
@@ -88,7 +98,7 @@ The mock server prints each posted batch, its top-level `workerId`, and the even
 ```bash
 curl -X POST http://localhost:8081/orders \
   -H 'Content-Type: application/json' \
-  -d '{"productId":"PROD-1","quantity":2,"userId":"USR-1"}'
+  -d '{"productId":"PROD-1","quantity":2,"userId":"USR-1","customerEmail":"buyer@example.com","couponCode":"WELCOME10"}'
 ```
 
 Expected `LOG_EVENT.eventName`: `orderCreated`
@@ -100,7 +110,9 @@ Expected top-level payload fields. The service receives `OrderRequest` as a DTO,
   "request": {
     "productId": "PROD-1",
     "quantity": 2,
-    "userId": "USR-1"
+    "userId": "USR-1",
+    "customerEmail": "__MASKED__",
+    "couponCode": "WELCOME10"
   }
 }
 ```
@@ -152,13 +164,61 @@ Expected `LOG_EVENT.eventName` values: `userRegistered`, `userDeactivated`
 Example `@LogEvent` names use camelCase:
 
 ```kotlin
-@LogEvent("userRegistered")
-fun register(name: String, @LogMasked email: String): String
+@LogEvent(
+    name = "userRegistered",
+    description = "User registration business eventName",
+    apiMethod = "POST",
+    apiPath = "/users",
+    apiDescription = "Registers a new example user"
+)
+fun register(
+    @LogField(description = "Registered user display name", type = "STRING")
+    name: String,
+    @LogMasked
+    @LogField(description = "Registered user email. SDK sends __MASKED__", type = "STRING")
+    email: String
+): String
 ```
 
 The SDK skips invalid `LOG_EVENT.eventName` values and leaves a warning in the target app log. Dotted names such as `user.registered` are intentionally not used by this example.
 
 Method parameter names become top-level `LOG_EVENT.payload` keys. DTOs are not flattened by the SDK contract. For example, `OrderService.create(request: OrderRequest)` is sent as top-level `request`.
+
+DTO field masking is also demonstrated by `OrderRequest.customerEmail`:
+
+```kotlin
+data class OrderRequest(
+    /** Product identifier selected by the user. */
+    @field:LogField(description = "Product identifier selected by the user", type = "STRING")
+    val productId: String,
+    /** Number of products to order. */
+    @field:LogField(description = "Number of products to order", type = "INT")
+    val quantity: Int,
+    /** Example user identifier connected to the order. */
+    @field:LogField(description = "Example user identifier connected to the order", type = "STRING")
+    val userId: String,
+    /** Buyer email. Masked by SDK before transport. */
+    @field:LogMasked
+    @field:LogField(description = "Buyer email. Masked by SDK before transport", type = "STRING", required = false)
+    val customerEmail: String? = null,
+    /** Optional coupon code applied to the order. */
+    @field:LogField(description = "Optional coupon code applied to the order", type = "STRING", required = false)
+    val couponCode: String? = null
+)
+```
+
+## Discovered LOG_EVENT Candidates
+
+With SDK `v0.3.0`, the example app reports discovered `@LogEvent` candidates to Console after Agent handshake succeeds:
+
+```text
+ApplicationReadyEvent
+  -> POST /api/agents
+  -> scan loaded classes for @LogEvent
+  -> POST /api/agents/{agentId}/discovered-log-events
+```
+
+This means the Console can show candidate eventNames and annotation-based LogSpec hints even before a sample is generated by calling the endpoint. Discovered candidates are not confirmed LogSpecs. Backend owners still confirm or edit LogSpecs through Console APIs.
 
 ## LogSpec And Log Catalog
 
@@ -173,12 +233,15 @@ Console owns Agent registration, LogSpec upsert, Raw Event storage, Log Catalog 
 | `spring.application.name` | `order-service` | Example app name |
 | `server.port` | `8081` | Example app port |
 | `logfriends.worker.id` | `order-service-local-1` | Fixed local Worker identifier |
+| `logfriends.app.version` | `examples-v0.3.0` | Optional app version sent with discovered `LOG_EVENT` candidates |
 | `logfriends.ingest.url` | `http://localhost:8080/ingest` | Console ingest endpoint |
 | `logfriends.trace.threshold.ms` | `0` | Show METHOD_TRACE in short example calls |
 
 | Environment variable | Description |
 |---|---|
 | `LOGFRIENDS_WORKER_ID` | Overrides `logfriends.worker.id` |
+| `LOGFRIENDS_APP_NAME` | Overrides `spring.application.name` for SDK registration |
+| `LOGFRIENDS_APP_VERSION` | Overrides `logfriends.app.version` |
 | `LOGFRIENDS_INGEST_URL` | Overrides `logfriends.ingest.url` |
 
 ## Tests

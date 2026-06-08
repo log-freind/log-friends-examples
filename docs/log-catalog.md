@@ -2,11 +2,15 @@
 
 `log-friends-examples` does not register LogSpecs from SDK runtime code.
 
+With SDK `v0.3.0`, `log-friends-examples` reports Discovered `LOG_EVENT` candidates and annotation-based LogSpec hints after Agent handshake succeeds. These candidates help Console show known `@LogEvent` methods and suggested descriptions even before a sample exists.
+
 Use Console APIs to connect example `LOG_EVENT` Raw Events to Log Catalog:
 
 ```text
 @LogEvent in examples
-  -> SDK HTTP JSON POST /ingest
+  -> SDK Agent handshake POST /api/agents
+  -> SDK Discovered candidates POST /api/agents/{agentId}/discovered-log-events
+  -> SDK HTTP JSON POST /ingest when methods execute
   -> Console custom_events Raw Event
   -> Console Agent + LogSpec API
   -> Log Catalog Recent Sample + Mismatch + Field Request
@@ -53,7 +57,7 @@ curl -X PUT http://localhost:8080/api/log-specs/by-agent/<agentId> \
         "levels": ["INFO"],
         "category": "BUSINESS",
         "fields": [
-          {"name":"request","type":"JSON","required":true,"description":"OrderRequest DTO object. Includes productId, quantity, customerEmail, and couponCode when present. SDK keeps DTO parameters as object values instead of flattening fields"}
+          {"name":"request","type":"JSON","required":true,"description":"OrderRequest DTO object. SDK keeps DTO parameters as object values instead of flattening fields. productId means selected product identifier, quantity means ordered count, userId means ordering user identifier, customerEmail is masked as __MASKED__, and couponCode is an optional applied coupon code"}
         ]
       },
       {
@@ -134,6 +138,8 @@ Run the app with the same workerId:
 
 ```bash
 LOGFRIENDS_WORKER_ID=order-service-local-1 \
+LOGFRIENDS_APP_NAME=order-service \
+LOGFRIENDS_APP_VERSION=examples-v0.3.0 \
 LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest \
 ./gradlew bootRun --args='--server.port=8081'
 ```
@@ -143,7 +149,7 @@ Trigger three `LOG_EVENT` samples:
 ```bash
 curl -X POST http://localhost:8081/orders \
   -H 'Content-Type: application/json' \
-  -d '{"productId":"PROD-1","quantity":2,"userId":"USR-1"}'
+  -d '{"productId":"PROD-1","quantity":2,"userId":"USR-1","customerEmail":"buyer@example.com","couponCode":"WELCOME10"}'
 
 curl -X POST http://localhost:8081/payments \
   -H 'Content-Type: application/json' \
@@ -170,9 +176,12 @@ curl 'http://localhost:8080/api/log-catalog/apps/order-service/events?workerId=o
 
 Check:
 
+- Discovered candidates appear after app startup, even before each eventName has a Recent Sample.
+- LogSpec Hints show annotation-provided event/API/field descriptions separately from confirmed LogSpec.
 - `orderCreated`, `paymentProcessed`, and `userRegistered` are connected by eventName.
 - LogSpec API context appears under the eventName when `apiMethod`, `apiPath`, or `apiDescription` is registered.
 - Field descriptions explain DTO payloads and scalar fields without requiring nested DTO schema support.
+- `OrderRequest.customerEmail` is masked by DTO field annotation before transport.
 - Recent Sample payloads come from `custom_events`.
 - `userRegistered.email` is masked before display.
 - Events emitted without a registered LogSpec appear as `NO_SPEC`.
