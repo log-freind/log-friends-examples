@@ -10,7 +10,7 @@
 ./gradlew build
 ./gradlew bootJar
 
-LOGFRIENDS_INGEST_URL=http://localhost:8082/ingest \
+LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest \
 LOGFRIENDS_WORKER_ID=order-service-local-1 \
 java -Djdk.attach.allowAttachSelf=true \
      -jar build/libs/examples.jar

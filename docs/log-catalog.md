@@ -22,7 +22,7 @@ appName=order-service
 ```
 
 ```bash
-curl -X POST http://localhost:8082/api/agents \
+curl -X POST http://localhost:8080/api/agents \
   -H 'Content-Type: application/json' \
   -d '{
     "workerId": "order-service-local-1",
@@ -40,7 +40,7 @@ The response contains an `id`. Use it as `<agentId>` below.
 The current Console API stores LogSpec snapshots by Agent:
 
 ```bash
-curl -X PUT http://localhost:8082/api/log-specs/by-agent/<agentId> \
+curl -X PUT http://localhost:8080/api/log-specs/by-agent/<agentId> \
   -H 'Content-Type: application/json' \
   -d '{
     "specs": [
@@ -134,7 +134,7 @@ Run the app with the same workerId:
 
 ```bash
 LOGFRIENDS_WORKER_ID=order-service-local-1 \
-LOGFRIENDS_INGEST_URL=http://localhost:8082/ingest \
+LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest \
 ./gradlew bootRun --args='--server.port=8081'
 ```
 
@@ -159,13 +159,13 @@ curl -X POST http://localhost:8081/users \
 Open the static UI:
 
 ```text
-http://localhost:8082/log-catalog
+http://localhost:8080/log-catalog
 ```
 
 Or query the API:
 
 ```bash
-curl 'http://localhost:8082/api/log-catalog/apps/order-service/events?workerId=order-service-local-1&sampleSize=5'
+curl 'http://localhost:8080/api/log-catalog/apps/order-service/events?workerId=order-service-local-1&sampleSize=5'
 ```
 
 Check:
