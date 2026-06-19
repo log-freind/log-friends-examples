@@ -1,133 +1,112 @@
 # log-friends-examples
 
-Spring Boot example application for the first-phase `log-friends-sdk` flow.
+Spring Boot example app for verifying the current `log-friends-sdk:v0.3.0` runtime flow against a local Log Friends Console.
 
-This example uses `log-friends-sdk:v0.3.0`, including startup Agent handshake state and Discovered `LOG_EVENT` candidate reporting.
+The app runs on port `8081` and sends SDK data to Console on port `8080`. It demonstrates:
 
-The app demonstrates runtime capture for five SDK eventTypes:
+| Domain | Endpoints | Main SDK behavior |
+|---|---|---|
+| Order | `POST /orders`, `DELETE /orders/{orderId}` | `HTTP`, `LOG`, `JDBC`, `METHOD_TRACE`, `LOG_EVENT`; `orderCreated`, `orderCancelled` |
+| Payment | `POST /payments`, `POST /payments/{txId}/refund` | `LOG_EVENT`; `paymentProcessed`, `paymentRefunded` |
+| User | `POST /users`, `PUT /users/{userId}/deactivate` | `LOG_EVENT`; `userRegistered`, `userDeactivated`, `@LogMasked` email |
 
-| eventType | Example source |
-|---|---|
-| `HTTP` | Order, Payment, and User REST calls |
-| `LOG` | Logback messages inside the services |
-| `JDBC` | H2-backed `order_audit` insert during `POST /orders` |
-| `METHOD_TRACE` | Spring `@Service` methods, with the example threshold set to `0ms` |
-| `LOG_EVENT` | camelCase `@LogEvent` methods |
+The Order create flow also inserts into the in-memory H2 `order_audit` table so JDBC capture has a real `PreparedStatement` path.
 
-## Runtime Flow
+## Expected Console Flow
+
+Start Console first at `http://localhost:8080`.
 
 ```text
 log-friends-examples
-  -> log-friends-sdk
-  -> HTTP JSON batch POST /ingest
-  -> log-friends-console
-  -> PostgreSQL / TimescaleDB
+  -> SDK startup Agent registration POST /api/agents
+  -> Discovered LOG_EVENT candidates POST /api/agents/{agentId}/discovered-log-events
+  -> captured event batches POST /ingest
+  -> Console Raw Events, CSV export, Log Catalog
 ```
 
-The example path uses the SDK library, HTTP ingest, and the Console without a separate java-agent JAR.
+On startup, the SDK registers the fixed `workerId` and `appName` as an Agent. After registration succeeds, SDK `v0.3.0` reports discovered `@LogEvent` candidates with `appVersion=examples-v0.3.0`.
 
-## Before Running
+In Console, Log Catalog can show Discovered `LOG_EVENT` candidates and annotation-based LogSpec hints before samples exist. The SDK does not auto-register confirmed LogSpecs; confirmed LogSpecs are created or edited through Console APIs. After you call the example endpoints, `LOG_EVENT` data is stored as Raw Events and becomes available for Log Catalog recent samples, mismatch checks, and Raw Events / CSV verification.
 
-The SDK requires a fixed `workerId` and a Console ingest endpoint.
+## Configuration
 
-This branch uses the SDK `v0.3.0` baseline that enforces required configuration, camelCase `LOG_EVENT.eventName`, `@LogMasked` handling, Agent handshake state, and Discovered `LOG_EVENT` candidate reporting.
+Use these values when verifying against local Console:
 
 ```bash
+export LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest
 export LOGFRIENDS_WORKER_ID=order-service-local-1
 export LOGFRIENDS_APP_NAME=order-service
 export LOGFRIENDS_APP_VERSION=examples-v0.3.0
-export LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest
 ```
 
-`workerId` identifies the running app instance. Do not generate a new value on every run if you want Console Agent metadata and statistics to stay connected.
+Defaults in `src/main/resources/application.properties` match the same local setup except `LOGFRIENDS_APP_NAME`, which falls back to `spring.application.name=order-service`.
 
-`application.properties` keeps `order-service-local-1`, `order-service`, and `http://localhost:8080/ingest` as local example fallbacks. Set the environment variables explicitly when verifying Console integration.
+The fixed `workerId` is intentional. Do not generate a new value every run if you want Console Agent metadata, discovered candidates, Raw Events, and Log Catalog data to stay connected.
 
-## Run With Console
+Required JVM flag:
 
-Start a Console that can receive ingest requests at `http://localhost:8080/ingest` first.
+```text
+-Djdk.attach.allowAttachSelf=true
+```
 
-Run the example app:
+`bootRun` already sets this flag in Gradle. Pass it explicitly when running the packaged JAR.
+
+## Build And Run
+
+Build:
 
 ```bash
-git clone https://github.com/log-freind/log-friends-examples.git
-cd log-friends-examples
+./gradlew build
+./gradlew bootJar
+```
+
+Run with Console:
+
+```bash
+LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest \
 LOGFRIENDS_WORKER_ID=order-service-local-1 \
 LOGFRIENDS_APP_NAME=order-service \
 LOGFRIENDS_APP_VERSION=examples-v0.3.0 \
-LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest \
 ./gradlew bootRun --args='--server.port=8081'
 ```
 
-Run a packaged JAR:
+Run the packaged JAR:
 
 ```bash
 ./gradlew bootJar
+LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest \
 LOGFRIENDS_WORKER_ID=order-service-local-1 \
 LOGFRIENDS_APP_NAME=order-service \
 LOGFRIENDS_APP_VERSION=examples-v0.3.0 \
-LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest \
 java -Djdk.attach.allowAttachSelf=true \
      -jar build/libs/log-friends-examples.jar
 ```
 
-## Run Against A Mock Ingest Endpoint
-
-Use the local harness when Console is not running:
+If Console is not running, the app can still start, but SDK delivery will log failures. For a lightweight receiver:
 
 ```bash
 python3 scripts/mock_ingest_server.py
 ```
 
-In another terminal:
+Then run the app with `LOGFRIENDS_INGEST_URL=http://127.0.0.1:8089/ingest`.
 
-```bash
-LOGFRIENDS_WORKER_ID=order-service-local-1 \
-LOGFRIENDS_APP_NAME=order-service \
-LOGFRIENDS_APP_VERSION=examples-v0.3.0 \
-LOGFRIENDS_INGEST_URL=http://127.0.0.1:8089/ingest \
-./gradlew bootRun --args='--server.port=8081'
-```
+## Generate LOG_EVENT Data
 
-The mock server prints each posted batch, its top-level `workerId`, and the eventType values inside `events`.
-
-## Walkthrough
-
-### 1. Order Creates HTTP, LOG, JDBC, METHOD_TRACE, and LOG_EVENT
+Order:
 
 ```bash
 curl -X POST http://localhost:8081/orders \
   -H 'Content-Type: application/json' \
   -d '{"productId":"PROD-1","quantity":2,"userId":"USR-1","customerEmail":"buyer@example.com","couponCode":"WELCOME10"}'
-```
 
-Expected `LOG_EVENT.eventName`: `orderCreated`
-
-Expected top-level payload fields. The service receives `OrderRequest` as a DTO, so the SDK keeps it as one object value instead of flattening it:
-
-```json
-{
-  "request": {
-    "productId": "PROD-1",
-    "quantity": 2,
-    "userId": "USR-1",
-    "customerEmail": "__MASKED__",
-    "couponCode": "WELCOME10"
-  }
-}
-```
-
-This flow also inserts one row into the in-memory H2 `order_audit` table so SDK JDBC capture has a real `PreparedStatement` path.
-
-### 2. Order Cancel
-
-```bash
 curl -X DELETE 'http://localhost:8081/orders/ORD-1001?reason=changed-mind'
 ```
 
-Expected `LOG_EVENT.eventName`: `orderCancelled`
+Expected eventNames: `orderCreated`, `orderCancelled`.
 
-### 3. Payment
+`OrderService.create(request: OrderRequest)` sends one top-level payload field named `request`; DTO fields are not flattened. `OrderRequest.customerEmail` is masked as `__MASKED__`.
+
+Payment:
 
 ```bash
 curl -X POST http://localhost:8081/payments \
@@ -137,9 +116,9 @@ curl -X POST http://localhost:8081/payments \
 curl -X POST 'http://localhost:8081/payments/TX-1001/refund?reason=order-cancelled'
 ```
 
-Expected `LOG_EVENT.eventName` values: `paymentProcessed`, `paymentRefunded`
+Expected eventNames: `paymentProcessed`, `paymentRefunded`.
 
-### 4. User And Masking
+User:
 
 ```bash
 curl -X POST http://localhost:8081/users \
@@ -149,100 +128,35 @@ curl -X POST http://localhost:8081/users \
 curl -X PUT http://localhost:8081/users/USR-1001/deactivate
 ```
 
-Expected `LOG_EVENT.eventName` values: `userRegistered`, `userDeactivated`
+Expected eventNames: `userRegistered`, `userDeactivated`.
 
-`UserService.register()` marks the email parameter with `@LogMasked`. The SDK sends that field as:
+`UserService.register()` masks the `email` parameter as `__MASKED__`.
 
-```json
-{
-  "email": "__MASKED__"
-}
-```
+## Verify In Console
 
-## LOG_EVENT Contract
+1. Confirm Agent registration with `GET http://localhost:8080/api/agents`, or by seeing `order-service` in Log Catalog.
+2. Open Log Catalog at `http://localhost:8080/log-catalog`.
+3. Confirm Discovered `LOG_EVENT` candidates and LogSpec hints appear for the example eventNames.
+4. Trigger the curl commands above to create real `LOG_EVENT` Raw Events.
+5. Open Raw Events at `http://localhost:8080/raw-events?appName=order-service&workerId=order-service-local-1`.
+6. Filter by `eventName` if needed, then use the CSV download to verify the full selected date range.
 
-Example `@LogEvent` names use camelCase:
-
-```kotlin
-@LogEvent(
-    name = "userRegistered",
-    description = "User registration business eventName",
-    apiMethod = "POST",
-    apiPath = "/users",
-    apiDescription = "Registers a new example user"
-)
-fun register(
-    @LogField(description = "Registered user display name", type = "STRING")
-    name: String,
-    @LogMasked
-    @LogField(description = "Registered user email. SDK sends __MASKED__", type = "STRING")
-    email: String
-): String
-```
-
-The SDK skips invalid `LOG_EVENT.eventName` values and leaves a warning in the target app log. Dotted names such as `user.registered` are intentionally not used by this example.
-
-Method parameter names become top-level `LOG_EVENT.payload` keys. DTOs are not flattened by the SDK contract. For example, `OrderService.create(request: OrderRequest)` is sent as top-level `request`.
-
-DTO field masking is also demonstrated by `OrderRequest.customerEmail`:
-
-```kotlin
-data class OrderRequest(
-    /** Product identifier selected by the user. */
-    @field:LogField(description = "Product identifier selected by the user", type = "STRING")
-    val productId: String,
-    /** Number of products to order. */
-    @field:LogField(description = "Number of products to order", type = "INT")
-    val quantity: Int,
-    /** Example user identifier connected to the order. */
-    @field:LogField(description = "Example user identifier connected to the order", type = "STRING")
-    val userId: String,
-    /** Buyer email. Masked by SDK before transport. */
-    @field:LogMasked
-    @field:LogField(description = "Buyer email. Masked by SDK before transport", type = "STRING", required = false)
-    val customerEmail: String? = null,
-    /** Optional coupon code applied to the order. */
-    @field:LogField(description = "Optional coupon code applied to the order", type = "STRING", required = false)
-    val couponCode: String? = null
-)
-```
-
-## Discovered LOG_EVENT Candidates
-
-With SDK `v0.3.0`, the example app reports discovered `@LogEvent` candidates to Console after Agent handshake succeeds:
+Raw Events API endpoints:
 
 ```text
-ApplicationReadyEvent
-  -> POST /api/agents
-  -> scan loaded classes for @LogEvent
-  -> POST /api/agents/{agentId}/discovered-log-events
+GET /api/events/custom
+GET /api/events/custom.csv
 ```
 
-This means the Console can show candidate eventNames and annotation-based LogSpec hints even before a sample is generated by calling the endpoint. Discovered candidates are not confirmed LogSpecs. Backend owners still confirm or edit LogSpecs through Console APIs.
+Both endpoints accept `appName`, `workerId`, `eventName`, `from`, and `to`; the JSON endpoint also accepts `limit`.
 
-## LogSpec And Log Catalog
+## LOG_EVENT Contract Notes
 
-This example app captures runtime data only. It does not auto-register LogSpec definitions.
+Example `@LogEvent` names use camelCase. Invalid eventNames are skipped by the SDK and leave a warning in the target app log.
 
-Console owns Agent registration, LogSpec upsert, Raw Event storage, Log Catalog assembly, mismatch calculation, and Field Request state. Use [docs/log-catalog.md](docs/log-catalog.md) to register the example Agent and LogSpec payloads through Console APIs.
+Parameter names become top-level `LOG_EVENT.payload` keys. DTO parameters remain object values, so `OrderRequest` is sent under `request` instead of being flattened into separate top-level fields.
 
-## Configuration
-
-| Property | Default | Description |
-|---|---|---|
-| `spring.application.name` | `order-service` | Example app name |
-| `server.port` | `8081` | Example app port |
-| `logfriends.worker.id` | `order-service-local-1` | Fixed local Worker identifier |
-| `logfriends.app.version` | `examples-v0.3.0` | Optional app version sent with discovered `LOG_EVENT` candidates |
-| `logfriends.ingest.url` | `http://localhost:8080/ingest` | Console ingest endpoint |
-| `logfriends.trace.threshold.ms` | `0` | Show METHOD_TRACE in short example calls |
-
-| Environment variable | Description |
-|---|---|
-| `LOGFRIENDS_WORKER_ID` | Overrides `logfriends.worker.id` |
-| `LOGFRIENDS_APP_NAME` | Overrides `spring.application.name` for SDK registration |
-| `LOGFRIENDS_APP_VERSION` | Overrides `logfriends.app.version` |
-| `LOGFRIENDS_INGEST_URL` | Overrides `logfriends.ingest.url` |
+Console owns Agent records, Raw Event storage, LogSpec confirmation, Log Catalog assembly, mismatch calculation, Field Request state, and CSV export.
 
 ## Tests
 
@@ -250,12 +164,11 @@ Console owns Agent registration, LogSpec upsert, Raw Event storage, Log Catalog 
 ./gradlew test
 ```
 
-Controller tests disable the SDK with `logfriends.agent.enabled=false`. `OrderAuditRepositoryTest` keeps the JDBC example path covered with the in-memory H2 database.
+Controller tests disable the SDK with `logfriends.agent.enabled=false`. `OrderAuditRepositoryTest` covers the H2-backed JDBC example path.
 
 ## Related Docs
 
-- [Log Catalog setup](docs/log-catalog.md)
+- [Example Log Catalog setup](docs/log-catalog.md)
 - `../log-friends-sdk/README.md`
 - `../log-friends-console/README.md`
 - `../docs/system/runtime-flow.md`
-- `../docs/console/ingest-api.md`
