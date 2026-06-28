@@ -37,10 +37,10 @@ class PaymentService {
     )
     fun refund(
         @LogField(description = "Refunded payment transaction identifier", type = "STRING")
-        txId: String,
+        transactionId: String,
         @LogField(description = "Refund reason", type = "STRING")
         reason: String
     ) {
-        log.info("Refunding transaction {}, reason: {}", txId, reason)
+        log.info("Refunding transaction {}, reason: {}", transactionId, reason)
     }
 }

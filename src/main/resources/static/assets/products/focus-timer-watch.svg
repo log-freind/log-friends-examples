@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="Focus Timer Watch">
+  <rect width="640" height="480" fill="#fff7ed"/>
+  <rect x="274" y="82" width="92" height="120" rx="30" fill="#111827"/>
+  <rect x="274" y="278" width="92" height="120" rx="30" fill="#111827"/>
+  <rect x="214" y="160" width="212" height="160" rx="48" fill="#fb923c"/>
+  <rect x="238" y="184" width="164" height="112" rx="34" fill="#ffffff"/>
+  <circle cx="320" cy="240" r="42" fill="#fed7aa"/>
+  <path d="M320 214v30l24 18" stroke="#9a3412" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="320" cy="240" r="5" fill="#9a3412"/>
+  <rect x="420" y="216" width="16" height="48" rx="8" fill="#ea580c"/>
+  <ellipse cx="320" cy="410" rx="112" ry="16" fill="#c2410c" opacity=".14"/>
+</svg>

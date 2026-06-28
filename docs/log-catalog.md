@@ -1,140 +1,38 @@
-# Example Log Catalog Setup
+# Shopping Mall Log Catalog Example
 
-`log-friends-examples` does not register LogSpecs from SDK runtime code.
+`log-friends-examples` is a Spring Boot shopping mall sample used to show how the SDK reports `LOG_EVENT` candidates, annotation-based LogSpec hints, and Raw Event samples to Console.
 
-With SDK `v0.3.0`, `log-friends-examples` reports Discovered `LOG_EVENT` candidates and annotation-based LogSpec hints after Agent handshake succeeds. These candidates help Console show known `@LogEvent` methods and suggested descriptions even before a sample exists.
+The sample now follows a small commerce flow:
 
-Use Console APIs to connect example `LOG_EVENT` Raw Events to Log Catalog:
+```text
+User
+-> Product catalog
+-> Wishlist
+-> Cart
+-> Coupon validation
+-> Order
+-> Payment
+-> Shipment
+-> Return / Refund / Cancellation
+```
+
+Product catalog rows are loaded from local SQLite seed data, so the shop example can be changed by editing SQL seed data instead of Kotlin code.
+
+Cart pricing and stock checks are owned by the backend. The browser can send a client-observed price, but `CartService` recalculates `unitPrice`, `lineTotal`, and available quantity from the SQLite product catalog. The shop screen also treats checkout as a full-cart flow: coupon validation and order creation use the cart subtotal, and `POST /orders` can receive `items` line data for the products in the cart.
+
+## Runtime Flow
 
 ```text
 @LogEvent in examples
   -> SDK Agent handshake POST /api/agents
-  -> SDK Discovered candidates POST /api/agents/{agentId}/discovered-log-events
+  -> SDK discovered candidates POST /api/agents/{agentId}/discovered-log-events
   -> SDK HTTP JSON POST /ingest when methods execute
   -> Console custom_events Raw Event
-  -> Console Agent + LogSpec API
-  -> Log Catalog Recent Sample + Mismatch + Field Request
+  -> Console API
+  -> Console Web Log Catalog / Raw Events
 ```
 
-## 1. Register The Example Agent
-
-Register the fixed workerId before checking Log Catalog:
-
-```text
-workerId=order-service-local-1
-appName=order-service
-```
-
-```bash
-curl -X POST http://localhost:8080/api/agents \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "workerId": "order-service-local-1",
-    "appName": "order-service",
-    "sdkVersion": "1.2.0",
-    "javaVersion": "21",
-    "hostname": "local"
-  }'
-```
-
-The response contains an `id`. Use it as `<agentId>` below.
-
-## 2. Upsert Example LogSpecs
-
-The current Console API stores LogSpec snapshots by Agent:
-
-```bash
-curl -X PUT http://localhost:8080/api/log-specs/by-agent/<agentId> \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "specs": [
-      {
-        "name": "orderCreated",
-        "description": "Order creation business eventName",
-        "apiMethod": "POST",
-        "apiPath": "/orders",
-        "apiDescription": "Creates an order from an OrderRequest DTO",
-        "levels": ["INFO"],
-        "category": "BUSINESS",
-        "fields": [
-          {"name":"request","type":"JSON","required":true,"description":"OrderRequest DTO object. SDK keeps DTO parameters as object values instead of flattening fields. productId means selected product identifier, quantity means ordered count, userId means ordering user identifier, customerEmail is masked as __MASKED__, and couponCode is an optional applied coupon code"}
-        ]
-      },
-      {
-        "name": "orderCancelled",
-        "description": "Order cancellation business eventName",
-        "apiMethod": "DELETE",
-        "apiPath": "/orders/{orderId}",
-        "apiDescription": "Cancels an existing order with a reason",
-        "levels": ["WARN"],
-        "category": "BUSINESS",
-        "fields": [
-          {"name":"orderId","type":"STRING","required":true,"description":"Cancelled order identifier"},
-          {"name":"reason","type":"STRING","required":true,"description":"Human-readable cancellation reason"}
-        ]
-      },
-      {
-        "name": "paymentProcessed",
-        "description": "Payment processed business eventName",
-        "apiMethod": "POST",
-        "apiPath": "/payments",
-        "apiDescription": "Processes a payment for an order",
-        "levels": ["INFO"],
-        "category": "BUSINESS",
-        "fields": [
-          {"name":"orderId","type":"STRING","required":true,"description":"Order identifier connected to the payment"},
-          {"name":"amount","type":"INT","required":true,"description":"Payment amount in the example request"},
-          {"name":"method","type":"STRING","required":true,"description":"Payment method such as CARD"}
-        ]
-      },
-      {
-        "name": "paymentRefunded",
-        "description": "Payment refund business eventName",
-        "apiMethod": "POST",
-        "apiPath": "/payments/{transactionId}/refund",
-        "apiDescription": "Refunds an existing payment transaction",
-        "levels": ["INFO"],
-        "category": "BUSINESS",
-        "fields": [
-          {"name":"transactionId","type":"STRING","required":true,"description":"Refunded payment transaction identifier"},
-          {"name":"reason","type":"STRING","required":true,"description":"Refund reason"}
-        ]
-      },
-      {
-        "name": "userRegistered",
-        "description": "User registration business eventName",
-        "apiMethod": "POST",
-        "apiPath": "/users",
-        "apiDescription": "Registers a new example user",
-        "levels": ["INFO"],
-        "category": "AUDIT",
-        "fields": [
-          {"name":"name","type":"STRING","required":true,"description":"Registered user display name"},
-          {"name":"email","type":"STRING","required":true,"description":"Registered user email. SDK sends __MASKED__"}
-        ]
-      },
-      {
-        "name": "userDeactivated",
-        "description": "User deactivation business eventName",
-        "apiMethod": "PUT",
-        "apiPath": "/users/{userId}/deactivate",
-        "apiDescription": "Deactivates an example user account",
-        "levels": ["WARN"],
-        "category": "AUDIT",
-        "fields": [
-          {"name":"userId","type":"STRING","required":true,"description":"Deactivated user identifier"},
-          {"name":"reason","type":"STRING","required":true,"description":"Deactivation reason"}
-        ]
-      }
-    ]
-  }'
-```
-
-Backend owners define LogSpec and eventName contracts. Data engineers inspect Recent Sample and Mismatch, then create Field Requests when the contract needs another field.
-
-## 3. Trigger Example Samples
-
-Run the app with the same workerId:
+## Run Examples
 
 ```bash
 LOGFRIENDS_WORKER_ID=order-service-local-1 \
@@ -144,31 +42,191 @@ LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest \
 ./gradlew bootRun --args='--server.port=8081'
 ```
 
-Trigger three `LOG_EVENT` samples:
+Console backend:
+
+```text
+http://localhost:8080
+```
+
+Console web:
+
+```text
+http://localhost:3000
+```
+
+Shopping mall screen:
+
+```text
+http://localhost:8081/shop
+```
+
+The screen loads products through `GET /products`, saves wishlist items through `POST /wishlists/{wishlistId}/items`, validates coupons through `POST /coupons/validate`, adds cart items through `POST /carts/{cartId}/items`, creates orders through `POST /orders`, and can continue to payment and shipment APIs. Those clicks create realistic `LOG_EVENT` samples for Console Raw Events.
+
+## EventName Candidates
+
+| Domain | eventName | API | Purpose |
+|---|---|---|---|
+| Catalog | `catalogProductsListed` | `GET /products` | Product list lookup with category and stock filters |
+| Catalog | `catalogProductViewed` | `GET /products/{productId}` | Product detail lookup |
+| Wishlist | `wishlistItemAdded` | `POST /wishlists/{wishlistId}/items` | Customer saves a product to wishlist |
+| Wishlist | `wishlistItemRemoved` | `DELETE /wishlists/{wishlistId}/items/{productId}` | Customer removes a product from wishlist |
+| Cart | `cartItemAdded` | `POST /carts/{cartId}/items` | Customer adds a product to cart |
+| Cart | `cartItemRemoved` | `DELETE /carts/{cartId}/items/{productId}` | Customer removes a product from cart |
+| Coupon | `couponValidated` | `POST /coupons/validate` | Customer validates a coupon before checkout |
+| Order | `orderCreated` | `POST /orders` | Customer places an order |
+| Order | `orderCancelled` | `DELETE /orders/{orderId}` | Customer or operator cancels an order |
+| Order | `returnRequested` | `POST /orders/{orderId}/return-requests` | Customer requests a return |
+| Payment | `paymentProcessed` | `POST /payments` | Payment is processed for an order |
+| Payment | `paymentRefunded` | `POST /payments/{transactionId}/refund` | Payment transaction is refunded |
+| Fulfillment | `shipmentCreated` | `POST /shipments` | Shipment is created for a paid order |
+| Fulfillment | `shipmentStatusChanged` | `PUT /shipments/{shipmentId}/status` | Shipment status changes |
+| User | `userRegistered` | `POST /users` | Customer account is registered |
+| User | `userDeactivated` | `PUT /users/{userId}/deactivate` | Customer account is deactivated |
+
+## Trigger Shopping Mall Samples
+
+### 1. Register a user
 
 ```bash
-curl -X POST http://localhost:8081/orders \
-  -H 'Content-Type: application/json' \
-  -d '{"productId":"PROD-1","quantity":2,"userId":"USR-1","customerEmail":"buyer@example.com","couponCode":"WELCOME10"}'
-
-curl -X POST http://localhost:8081/payments \
-  -H 'Content-Type: application/json' \
-  -d '{"orderId":"ORD-1001","amount":50000,"method":"CARD"}'
-
 curl -X POST http://localhost:8081/users \
   -H 'Content-Type: application/json' \
   -d '{"name":"Jane","email":"jane@example.com"}'
 ```
 
-## 4. Inspect Log Catalog
+### 2. Browse products
 
-Open the static UI:
+```bash
+curl 'http://localhost:8081/products?category=shoes&stockStatus=IN_STOCK'
 
-```text
-http://localhost:8080/log-catalog
+curl 'http://localhost:8081/products?q=runner&minPrice=50000&maxPrice=100000'
+
+curl http://localhost:8081/products/PRD-SNK-001
 ```
 
-Or query the API:
+### 3. Save a product to wishlist
+
+```bash
+curl -X POST http://localhost:8081/wishlists/WISH-100/items \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "userId":"USR-001",
+    "productId":"PRD-SNK-001",
+    "sourcePage":"product-card"
+  }'
+```
+
+### 4. Add a product to cart
+
+```bash
+curl -X POST http://localhost:8081/carts/CART-100/items \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "userId":"USR-001",
+    "productId":"PRD-SNK-001",
+    "quantity":2,
+    "unitPrice":89000,
+    "sourcePage":"product-detail"
+  }'
+```
+
+### 5. Validate a coupon
+
+```bash
+curl -X POST http://localhost:8081/coupons/validate \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "userId":"USR-001",
+    "couponCode":"WELCOME10",
+    "orderTotal":178000
+  }'
+```
+
+### 6. Create an order
+
+```bash
+curl -X POST http://localhost:8081/orders \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "productId":"PRD-SNK-001",
+    "quantity":2,
+    "userId":"USR-001",
+    "customerEmail":"buyer@example.com",
+    "couponCode":"WELCOME10",
+    "channel":"MOBILE_APP",
+    "orderTotal":227000,
+    "deliveryMethod":"EXPRESS",
+    "shippingZipCode":"06236",
+    "items":[
+      {
+        "productId":"PRD-SNK-001",
+        "quantity":2,
+        "unitPrice":89000,
+        "lineTotal":178000
+      },
+      {
+        "productId":"PRD-HOM-033",
+        "quantity":1,
+        "unitPrice":69000,
+        "lineTotal":69000
+      }
+    ]
+  }'
+```
+
+### 7. Process a payment
+
+```bash
+curl -X POST http://localhost:8081/payments \
+  -H 'Content-Type: application/json' \
+  -d '{"orderId":"ORD-1001","amount":227000,"method":"CARD"}'
+```
+
+### 8. Create and update a shipment
+
+```bash
+curl -X POST http://localhost:8081/shipments \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "orderId":"ORD-1001",
+    "carrier":"CJ_LOGISTICS",
+    "trackingNumber":"CJ-924812341",
+    "shipmentStatus":"READY_TO_SHIP",
+    "warehouseCode":"WH-SEOUL-01"
+  }'
+
+curl -X PUT http://localhost:8081/shipments/SHP-1001/status \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "shipmentStatus":"IN_TRANSIT",
+    "warehouseCode":"HUB-DAEJEON-01",
+    "carrier":"CJ_LOGISTICS"
+  }'
+```
+
+### 9. Request a return and refund
+
+```bash
+curl -X POST http://localhost:8081/orders/ORD-1001/return-requests \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "userId":"USR-001",
+    "productId":"PRD-SNK-001",
+    "reason":"size mismatch",
+    "opened":true
+  }'
+
+curl -X POST 'http://localhost:8081/payments/TX-1001/refund?reason=size+mismatch'
+```
+
+## Inspect Console
+
+Use Console Web first:
+
+```text
+http://localhost:3000
+```
+
+Or query Console backend directly:
 
 ```bash
 curl 'http://localhost:8080/api/log-catalog/apps/order-service/events?workerId=order-service-local-1&sampleSize=5'
@@ -176,18 +234,16 @@ curl 'http://localhost:8080/api/log-catalog/apps/order-service/events?workerId=o
 
 Check:
 
-- Discovered candidates appear after app startup, even before each eventName has a Recent Sample.
-- LogSpec Hints show annotation-provided event/API/field descriptions separately from confirmed LogSpec.
-- `orderCreated`, `paymentProcessed`, and `userRegistered` are connected by eventName.
-- LogSpec API context appears under the eventName when `apiMethod`, `apiPath`, or `apiDescription` is registered.
-- Field descriptions explain DTO payloads and scalar fields without requiring nested DTO schema support.
-- `OrderRequest.customerEmail` is masked by DTO field annotation before transport.
-- Recent Sample payloads come from `custom_events`.
-- `userRegistered.email` is masked before display.
-- Events emitted without a registered LogSpec appear as `NO_SPEC`.
+- Discovered `LOG_EVENT` candidates appear after startup, even before every eventName has a sample.
+- LogSpec Hints show annotation-provided API and field descriptions.
+- Raw Events show actual shopping mall payloads.
+- `customerEmail` and `email` are masked before transport.
+- Cart checkout samples include `items`, `orderTotal`, `couponCode`, delivery method, and shipping zip code.
+- Product, wishlist, cart, coupon, order, payment, fulfillment, and user events are connected by commerce keys such as `userId`, `productId`, `orderId`, `transactionId`, and `shipmentId`.
 
-## 5. See A Mismatch
+## Notes
 
-Add a required top-level `couponId` field to the `orderCreated` LogSpec and upsert it again without changing the example app. The next Catalog response should show a `MISSING_FIELD` mismatch because the sample payload has top-level `request`, not `couponId`.
-
-Field Request belongs to Console state. This example guide does not create Jira, Linear, or GitHub tickets.
+- This app is still an SDK usage example, not a full commerce backend.
+- The goal is to provide realistic eventName and payload samples for Log Catalog and Raw Events.
+- Backend owners define confirmed LogSpecs in Console. SDK annotations provide discovery hints before LogSpec is confirmed.
+- Product catalog seed data lives in `src/main/resources/data.sql` and is stored in the local SQLite database configured by `EXAMPLES_DATABASE_URL`.

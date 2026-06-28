@@ -63,4 +63,98 @@ class OrderControllerTest {
             .andExpect(status().isOk)
             .andExpect(content().string("ORD-456"))
     }
+
+    @Test
+    fun `POST orders - 장바구니 라인아이템이 있으면 함께 전달한다`() {
+        val request = OrderRequest(
+            productId = "PRD-SNK-001",
+            quantity = 3,
+            userId = "USR-001",
+            customerEmail = "customer@example.com",
+            couponCode = "WELCOME10",
+            channel = "WEB",
+            orderTotal = 227000,
+            deliveryMethod = "STANDARD",
+            shippingZipCode = "06236",
+            items = listOf(
+                OrderLineItem(
+                    productId = "PRD-SNK-001",
+                    quantity = 2,
+                    unitPrice = 89000,
+                    lineTotal = 178000
+                ),
+                OrderLineItem(
+                    productId = "PRD-HOM-033",
+                    quantity = 1,
+                    unitPrice = 69000,
+                    lineTotal = 69000
+                )
+            )
+        )
+        given(orderService.create(request)).willReturn("ORD-CART-1")
+
+        mockMvc.perform(
+            post("/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "productId": "PRD-SNK-001",
+                      "quantity": 3,
+                      "userId": "USR-001",
+                      "customerEmail": "customer@example.com",
+                      "couponCode": "WELCOME10",
+                      "channel": "WEB",
+                      "orderTotal": 227000,
+                      "deliveryMethod": "STANDARD",
+                      "shippingZipCode": "06236",
+                      "items": [
+                        {
+                          "productId": "PRD-SNK-001",
+                          "quantity": 2,
+                          "unitPrice": 89000,
+                          "lineTotal": 178000
+                        },
+                        {
+                          "productId": "PRD-HOM-033",
+                          "quantity": 1,
+                          "unitPrice": 69000,
+                          "lineTotal": 69000
+                        }
+                      ]
+                    }
+                    """.trimIndent()
+                )
+        )
+            .andExpect(status().isOk)
+            .andExpect(content().string("ORD-CART-1"))
+    }
+
+    @Test
+    fun `POST order return requests - 유효한 요청은 200과 returnId 반환`() {
+        val request = ReturnRequest(
+            userId = "USR-001",
+            productId = "PROD-1",
+            reason = "size mismatch",
+            opened = true
+        )
+        given(orderService.requestReturn("ORD-123", request)).willReturn("RTN-001")
+
+        mockMvc.perform(
+            post("/orders/ORD-123/return-requests")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "userId": "USR-001",
+                      "productId": "PROD-1",
+                      "reason": "size mismatch",
+                      "opened": true
+                    }
+                    """.trimIndent()
+                )
+        )
+            .andExpect(status().isOk)
+            .andExpect(content().string("RTN-001"))
+    }
 }

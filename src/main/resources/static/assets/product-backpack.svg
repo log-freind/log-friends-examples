@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-labelledby="title desc">
+  <title id="title">City Commuter Backpack</title>
+  <desc id="desc">Illustration of a structured commuter backpack.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#fff7ed"/>
+      <stop offset="1" stop-color="#edf8f5"/>
+    </linearGradient>
+    <linearGradient id="bag" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#334155"/>
+      <stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="480" fill="url(#bg)"/>
+  <path fill="#fecdd3" d="M73 154c42-67 123-101 201-85 35 7 73 4 106-10 65-28 143-6 183 52 44 65 29 154-35 199-63 45-152 35-204-22-23-25-59-34-91-23-69 23-145-8-178-73-6-12-1-27 18-38Z" opacity=".45"/>
+  <path fill="#0f172a" d="M237 129c0-47 37-84 83-84s83 37 83 84h-38c0-25-20-46-45-46s-45 21-45 46h-38Z"/>
+  <path fill="url(#bag)" d="M181 146h278c39 0 72 30 76 69l20 178c5 44-30 82-74 82H159c-44 0-79-38-74-82l20-178c4-39 37-69 76-69Z"/>
+  <path fill="#1e293b" d="M162 193h316c18 0 34 13 37 31l8 53H117l8-53c3-18 19-31 37-31Z" opacity=".42"/>
+  <rect x="183" y="247" width="274" height="142" rx="28" fill="#ffffff" opacity=".92"/>
+  <path fill="#dbeafe" d="M215 280h210v24H215z"/>
+  <path fill="#f97316" d="M239 333h162v28H239z"/>
+  <path fill="#0f766e" d="M235 146h170v46H235z"/>
+  <g fill="none" stroke="#e2e8f0" stroke-linecap="round" stroke-width="16">
+    <path d="M138 230 98 400"/>
+    <path d="M502 230 542 400"/>
+  </g>
+  <rect x="283" y="413" width="74" height="26" rx="13" fill="#0f172a"/>
+</svg>

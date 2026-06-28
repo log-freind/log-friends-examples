@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Log Friends Shop</title>
+    <link rel="stylesheet" href="/shop.css">
+    <script defer src="/shop.js"></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <a class="brand" href="/shop" aria-label="Log Friends Shop">
+        <span class="brand-mark" aria-hidden="true">LF</span>
+        <span>
+          <strong>Log Friends Shop</strong>
+          <small>Commerce event demo</small>
+        </span>
+      </a>
+
+      <form class="session-form" aria-label="Demo session">
+        <label>
+          <span>User</span>
+          <input id="userId" name="userId" value="demo-user-001" autocomplete="off">
+        </label>
+        <label>
+          <span>Cart</span>
+          <input id="cartId" name="cartId" value="cart-demo-001" autocomplete="off">
+        </label>
+        <label>
+          <span>Wishlist</span>
+          <input id="wishlistId" name="wishlistId" value="wishlist-demo-001" autocomplete="off">
+        </label>
+      </form>
+    </header>
+
+    <main class="shop-shell">
+      <section class="catalog-area" aria-labelledby="productsTitle">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Catalog</span>
+            <h1 id="productsTitle">Products</h1>
+          </div>
+          <div class="catalog-controls">
+            <label class="search-field">
+              <span>Search</span>
+              <input id="searchQuery" type="search" placeholder="Product or brand" autocomplete="off">
+            </label>
+            <label>
+              <span>Category</span>
+              <select id="categoryFilter">
+                <option value="">All</option>
+                <option value="shoes">Shoes</option>
+                <option value="bags">Bags</option>
+                <option value="electronics">Electronics</option>
+                <option value="outerwear">Outerwear</option>
+                <option value="home">Home</option>
+              </select>
+            </label>
+            <label>
+              <span>Stock</span>
+              <select id="stockFilter">
+                <option value="">All</option>
+                <option value="IN_STOCK">In stock</option>
+                <option value="LOW_STOCK">Low stock</option>
+                <option value="SOLD_OUT">Sold out</option>
+              </select>
+            </label>
+            <label class="price-field">
+              <span>Min</span>
+              <input id="minPriceFilter" type="number" min="0" step="1000" inputmode="numeric">
+            </label>
+            <label class="price-field">
+              <span>Max</span>
+              <input id="maxPriceFilter" type="number" min="0" step="1000" inputmode="numeric">
+            </label>
+            <button id="refreshProducts" class="button secondary" type="button">
+              <span aria-hidden="true">&#8635;</span>
+              <span>Refresh</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="productGrid" class="product-grid" aria-live="polite"></div>
+      </section>
+
+      <aside class="checkout-panel" aria-label="Checkout">
+        <section class="panel-section detail-section" aria-labelledby="detailTitle">
+          <div class="panel-title">
+            <span class="eyebrow">Selected item</span>
+            <strong id="selectedProductName">Choose a product</strong>
+          </div>
+          <div id="productDetail" class="product-detail" aria-live="polite"></div>
+          <div class="detail-actions">
+            <button id="selectedWish" class="button secondary" type="button" disabled>
+              <span aria-hidden="true">&hearts;</span>
+              <span>Wish</span>
+            </button>
+            <button id="selectedCompare" class="button secondary" type="button" disabled>
+              <span aria-hidden="true">=</span>
+              <span>Compare</span>
+            </button>
+            <button id="selectedAdd" class="button primary" type="button" disabled>
+              <span aria-hidden="true">+</span>
+              <span>Add selected</span>
+            </button>
+          </div>
+          <div class="shop-signals" aria-live="polite">
+            <span id="wishCount">0 wished</span>
+            <span id="compareCount">0 comparing</span>
+          </div>
+          <div id="compareTray" class="compare-tray"></div>
+        </section>
+
+        <section class="panel-section">
+          <div class="panel-title">
+            <span class="eyebrow">Cart</span>
+            <strong id="cartCount">0 items</strong>
+          </div>
+          <div id="cartList" class="cart-list" aria-live="polite"></div>
+          <div class="total-row">
+            <span>Total</span>
+            <strong id="cartTotal">KRW 0</strong>
+          </div>
+        </section>
+
+        <section class="panel-section">
+          <div class="panel-title">
+            <span class="eyebrow">Checkout</span>
+            <strong id="selectedItemLabel">No item</strong>
+          </div>
+          <label class="full-field">
+            <span>Email</span>
+            <input id="customerEmail" type="email" value="customer@example.com" autocomplete="email">
+          </label>
+          <div class="two-fields">
+            <label>
+              <span>Payment</span>
+              <select id="paymentMethod">
+                <option value="CARD">Card</option>
+                <option value="BANK_TRANSFER">Bank transfer</option>
+                <option value="POINTS">Points</option>
+              </select>
+            </label>
+            <label>
+              <span>Delivery</span>
+              <select id="deliveryMethod">
+                <option value="STANDARD">Standard</option>
+                <option value="EXPRESS">Express</option>
+                <option value="PICKUP">Pickup</option>
+              </select>
+            </label>
+          </div>
+          <label class="full-field">
+            <span>Zip code</span>
+            <input id="shippingZipCode" value="06236" inputmode="numeric" autocomplete="postal-code">
+          </label>
+          <div class="coupon-row">
+            <label>
+              <span>Coupon</span>
+              <input id="couponCode" value="WELCOME10" autocomplete="off">
+            </label>
+            <button id="validateCoupon" class="button secondary" type="button" disabled>
+              <span aria-hidden="true">%</span>
+              <span>Apply</span>
+            </button>
+          </div>
+          <dl class="checkout-summary">
+            <div>
+              <dt>Selected subtotal</dt>
+              <dd id="selectedSubtotal">KRW 0</dd>
+            </div>
+            <div>
+              <dt>Coupon discount</dt>
+              <dd id="couponDiscount">KRW 0</dd>
+            </div>
+            <div>
+              <dt>Payable amount</dt>
+              <dd id="payableAmount">KRW 0</dd>
+            </div>
+          </dl>
+          <p id="couponMessage" class="coupon-message">Apply a coupon after selecting an item.</p>
+          <div class="flow-actions">
+            <button id="createOrder" class="button primary" type="button" disabled>
+              <span aria-hidden="true">+</span>
+              <span>Create order</span>
+            </button>
+            <button id="processPayment" class="button primary" type="button" disabled>
+              <span aria-hidden="true">$</span>
+              <span>Pay</span>
+            </button>
+            <button id="createShipment" class="button primary" type="button" disabled>
+              <span aria-hidden="true">&gt;</span>
+              <span>Create shipment</span>
+            </button>
+            <button id="markInTransit" class="button secondary" type="button" disabled>
+              <span aria-hidden="true">&gt;</span>
+              <span>Mark in transit</span>
+            </button>
+            <button id="markDelivered" class="button secondary" type="button" disabled>
+              <span aria-hidden="true">&#10003;</span>
+              <span>Mark delivered</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="panel-section status-section" aria-labelledby="statusTitle">
+          <div class="panel-title">
+            <span class="eyebrow">Order status</span>
+            <strong id="statusTitle">Checkout flow</strong>
+          </div>
+          <ol class="status-steps" aria-live="polite">
+            <li id="statusCart" class="status-step active">
+              <span></span>
+              <strong>Cart</strong>
+              <small id="cartStatusText">Waiting for item</small>
+            </li>
+            <li id="statusOrder" class="status-step">
+              <span></span>
+              <strong>Order</strong>
+              <small id="orderStatusText">Not created</small>
+            </li>
+            <li id="statusPayment" class="status-step">
+              <span></span>
+              <strong>Payment</strong>
+              <small id="paymentStatusText">Not paid</small>
+            </li>
+            <li id="statusShipment" class="status-step">
+              <span></span>
+              <strong>Shipment</strong>
+              <small id="shipmentStatusText">Not started</small>
+            </li>
+          </ol>
+        </section>
+
+        <section class="panel-section result-section">
+          <div class="panel-title">
+            <span class="eyebrow">Last response</span>
+            <strong id="lastAction">Ready</strong>
+          </div>
+          <dl class="id-list">
+            <div>
+              <dt>Order</dt>
+              <dd id="orderId">-</dd>
+            </div>
+            <div>
+              <dt>Payment</dt>
+              <dd id="transactionId">-</dd>
+            </div>
+            <div>
+              <dt>Shipment</dt>
+              <dd id="shipmentId">-</dd>
+            </div>
+          </dl>
+          <pre id="responseLog" class="response-log">Waiting for API call.</pre>
+        </section>
+      </aside>
+    </main>
+
+    <template id="productTemplate">
+      <article class="product-card">
+        <div class="product-media">
+          <img class="product-image" alt="">
+          <div class="product-card-tools">
+            <button class="icon-chip wish-button" type="button" aria-pressed="false">
+              <span aria-hidden="true">&hearts;</span>
+              <span class="sr-only">Wish</span>
+            </button>
+            <button class="icon-chip compare-button" type="button" aria-pressed="false">
+              <span aria-hidden="true">=</span>
+              <span class="sr-only">Compare</span>
+            </button>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-meta">
+            <span class="product-category"></span>
+            <span class="stock-badge"></span>
+          </div>
+          <h2 class="product-name"></h2>
+          <p class="product-note">
+            <span class="product-brand"></span>
+            <span class="product-rating"></span>
+          </p>
+          <p class="product-description"></p>
+          <div class="product-actions">
+            <strong class="product-price"></strong>
+            <label class="quantity-field">
+              <span class="sr-only">Quantity</span>
+              <input class="quantity-input" type="number" min="1" max="9" value="1">
+            </label>
+            <button class="button secondary detail-button" type="button">
+              <span>Details</span>
+            </button>
+            <button class="button add-button" type="button">
+              <span aria-hidden="true">+</span>
+              <span>Add</span>
+            </button>
+          </div>
+        </div>
+      </article>
+    </template>
+  </body>
+</html>

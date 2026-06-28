@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="City Commuter Backpack">
+  <rect width="640" height="480" fill="#f3f4f6"/>
+  <path d="M238 146c0-54 164-54 164 0v36h-42v-34c0-21-80-21-80 0v34h-42v-36z" fill="#111827"/>
+  <rect x="190" y="156" width="260" height="236" rx="32" fill="#334155"/>
+  <rect x="224" y="206" width="192" height="142" rx="20" fill="#475569"/>
+  <rect x="250" y="232" width="140" height="18" rx="9" fill="#94a3b8"/>
+  <rect x="250" y="268" width="96" height="14" rx="7" fill="#94a3b8"/>
+  <path d="M190 196c-48 24-56 101-24 144" stroke="#1f2937" stroke-width="22" stroke-linecap="round"/>
+  <path d="M450 196c48 24 56 101 24 144" stroke="#1f2937" stroke-width="22" stroke-linecap="round"/>
+  <rect x="266" y="372" width="108" height="16" rx="8" fill="#0ea5e9"/>
+  <ellipse cx="320" cy="410" rx="140" ry="18" fill="#64748b" opacity=".18"/>
+</svg>

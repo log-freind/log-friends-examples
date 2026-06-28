@@ -13,9 +13,12 @@ class PaymentController(private val paymentService: PaymentService) {
         return ResponseEntity.ok(txId)
     }
 
-    @PostMapping("/{txId}/refund")
-    fun refund(@PathVariable txId: String, @RequestParam reason: String): ResponseEntity<Void> {
-        paymentService.refund(txId, reason)
+    @PostMapping("/{transactionId}/refund")
+    fun refund(
+        @PathVariable transactionId: String,
+        @RequestParam reason: String
+    ): ResponseEntity<Void> {
+        paymentService.refund(transactionId, reason)
         return ResponseEntity.noContent().build()
     }
 }

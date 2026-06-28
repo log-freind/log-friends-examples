@@ -42,10 +42,21 @@ class UserControllerTest {
 
     @Test
     fun `PUT users deactivate - 204 반환`() {
-        willDoNothing().given(userService).deactivate("USR-001")
+        willDoNothing().given(userService).deactivate("USR-001", "customer request")
 
         mockMvc.perform(
             put("/users/USR-001/deactivate")
+        )
+            .andExpect(status().isNoContent)
+    }
+
+    @Test
+    fun `PUT users deactivate - reason 있으면 서비스에 전달`() {
+        willDoNothing().given(userService).deactivate("USR-003", "fraud suspicion")
+
+        mockMvc.perform(
+            put("/users/USR-003/deactivate")
+                .param("reason", "fraud suspicion")
         )
             .andExpect(status().isNoContent)
     }

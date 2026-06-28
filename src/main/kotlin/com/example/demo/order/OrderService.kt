@@ -22,9 +22,21 @@ class OrderService(
         @LogField(description = "OrderRequest DTO object", type = "JSON")
         request: OrderRequest
     ): String {
-        log.info("Creating order for product {}, user {}", request.productId, request.userId)
+        val lineItems = request.items.orEmpty().ifEmpty {
+            listOf(OrderLineItem(productId = request.productId, quantity = request.quantity))
+        }
+        log.info(
+            "Creating {} order for user {}, items {}, delivery {}, total {}",
+            request.channel ?: "WEB",
+            request.userId,
+            lineItems.size,
+            request.deliveryMethod ?: "STANDARD",
+            request.orderTotal ?: lineItems.sumOf { (it.lineTotal ?: 0) }
+        )
         val orderId = "ORD-" + System.currentTimeMillis()
-        orderAuditRepository.recordCreated(orderId, request.productId, request.quantity, request.userId)
+        lineItems.forEach { item ->
+            orderAuditRepository.recordCreated(orderId, item.productId, item.quantity, request.userId)
+        }
         return orderId
     }
 
@@ -42,5 +54,22 @@ class OrderService(
         reason: String
     ) {
         log.warn("Canceling order {}, reason: {}", orderId, reason)
+    }
+
+    @LogEvent(
+        name = "returnRequested",
+        description = "Customer return request business eventName",
+        apiMethod = "POST",
+        apiPath = "/orders/{orderId}/return-requests",
+        apiDescription = "Creates a return request for an order item"
+    )
+    fun requestReturn(
+        @LogField(description = "Order identifier connected to the return request", type = "STRING")
+        orderId: String,
+        @LogField(description = "ReturnRequest DTO object", type = "JSON")
+        request: ReturnRequest
+    ): String {
+        log.info("Requesting return for order {}, product {}, reason {}", orderId, request.productId, request.reason)
+        return "RTN-" + System.currentTimeMillis()
     }
 }
