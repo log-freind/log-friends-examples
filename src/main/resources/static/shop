@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="refresh" content="0; url=/shop.html">
+    <title>Log Friends Shop</title>
+    <link rel="canonical" href="/shop.html">
+    <script>window.location.replace("/shop.html");</script>
+  </head>
+  <body>
+    <a href="/shop.html">Open Log Friends Shop</a>
+  </body>
+</html>

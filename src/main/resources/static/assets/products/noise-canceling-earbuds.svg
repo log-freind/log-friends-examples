@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="Noise Canceling Earbuds">
+  <rect width="640" height="480" fill="#f5f3ff"/>
+  <rect x="205" y="286" width="230" height="86" rx="28" fill="#ffffff" stroke="#c4b5fd" stroke-width="10"/>
+  <circle cx="262" cy="205" r="52" fill="#7c3aed"/>
+  <circle cx="378" cy="205" r="52" fill="#8b5cf6"/>
+  <circle cx="262" cy="205" r="22" fill="#ede9fe"/>
+  <circle cx="378" cy="205" r="22" fill="#ede9fe"/>
+  <rect x="242" y="242" width="40" height="76" rx="20" fill="#7c3aed"/>
+  <rect x="358" y="242" width="40" height="76" rx="20" fill="#8b5cf6"/>
+  <path d="M176 152c-34 56-34 120 0 176m288-176c34 56 34 120 0 176" stroke="#a78bfa" stroke-width="16" fill="none" stroke-linecap="round"/>
+  <ellipse cx="320" cy="390" rx="132" ry="16" fill="#7c3aed" opacity=".15"/>
+</svg>

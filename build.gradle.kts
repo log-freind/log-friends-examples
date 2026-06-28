@@ -21,6 +21,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("com.github.log-freind:log-friends-sdk:v0.3.0")
     runtimeOnly("com.h2database:h2")
+    runtimeOnly("org.xerial:sqlite-jdbc:3.49.1.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
     testImplementation("org.junit.platform:junit-platform-launcher")

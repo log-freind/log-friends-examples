@@ -18,4 +18,13 @@ class OrderController(private val orderService: OrderService) {
         orderService.cancel(orderId, reason)
         return ResponseEntity.noContent().build()
     }
+
+    @PostMapping("/{orderId}/return-requests")
+    fun requestReturn(
+        @PathVariable orderId: String,
+        @RequestBody request: ReturnRequest
+    ): ResponseEntity<String> {
+        val returnId = orderService.requestReturn(orderId, request)
+        return ResponseEntity.ok(returnId)
+    }
 }

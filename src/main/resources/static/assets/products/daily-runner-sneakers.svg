@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="Daily Runner Sneakers">
+  <rect width="640" height="480" fill="#edf6ff"/>
+  <path d="M112 324c56 16 120 20 192 12 91-10 166-44 224-100 8 40 18 68 30 84 12 17 4 38-16 43-138 34-286 38-444 13-22-4-27-43 14-52z" fill="#0f766e"/>
+  <path d="M170 275c72 26 184 22 262-38l76 10c-79 72-164 106-262 105-58-1-109-8-152-22l76-55z" fill="#ffffff"/>
+  <path d="M181 273l77-78c15-14 34-19 53-12l145 54c-72 55-169 70-275 36z" fill="#2563eb"/>
+  <path d="M214 267c46 18 107 20 184 6" stroke="#dbeafe" stroke-width="14" stroke-linecap="round"/>
+  <path d="M244 218l36 16m32-28l34 16m31 0l33 16" stroke="#ffffff" stroke-width="10" stroke-linecap="round"/>
+  <ellipse cx="216" cy="344" rx="40" ry="10" fill="#064e3b" opacity=".22"/>
+  <ellipse cx="460" cy="330" rx="64" ry="12" fill="#064e3b" opacity=".2"/>
+</svg>

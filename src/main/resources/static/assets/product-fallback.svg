@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-labelledby="title desc">
+  <title id="title">Product image</title>
+  <desc id="desc">Generic product illustration.</desc>
+  <rect width="640" height="480" fill="#eef3f8"/>
+  <rect x="160" y="110" width="320" height="260" rx="38" fill="#ffffff" stroke="#cbd5e1" stroke-width="10"/>
+  <path fill="#0f766e" d="M218 177h204v44H218z"/>
+  <path fill="#2563eb" d="M218 251h142v44H218z"/>
+  <path fill="#f97316" d="M383 251h39v44h-39z"/>
+  <circle cx="245" cy="343" r="18" fill="#0f172a"/>
+  <circle cx="395" cy="343" r="18" fill="#0f172a"/>
+</svg>

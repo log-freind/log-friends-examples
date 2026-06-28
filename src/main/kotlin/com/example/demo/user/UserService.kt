@@ -37,8 +37,10 @@ class UserService {
     )
     fun deactivate(
         @LogField(description = "Deactivated user identifier", type = "STRING")
-        userId: String
+        userId: String,
+        @LogField(description = "Reason why the user account was deactivated", type = "STRING")
+        reason: String
     ) {
-        log.warn("Deactivating user {}", userId)
+        log.warn("Deactivating user {}, reason: {}", userId, reason)
     }
 }

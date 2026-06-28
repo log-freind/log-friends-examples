@@ -14,8 +14,11 @@ class UserController(private val userService: UserService) {
     }
 
     @PutMapping("/{userId}/deactivate")
-    fun deactivate(@PathVariable userId: String): ResponseEntity<Void> {
-        userService.deactivate(userId)
+    fun deactivate(
+        @PathVariable userId: String,
+        @RequestParam(defaultValue = "customer request") reason: String
+    ): ResponseEntity<Void> {
+        userService.deactivate(userId, reason)
         return ResponseEntity.noContent().build()
     }
 }

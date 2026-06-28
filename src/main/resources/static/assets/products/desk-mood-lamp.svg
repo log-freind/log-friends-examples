@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="Desk Mood Lamp">
+  <rect width="640" height="480" fill="#fffbeb"/>
+  <circle cx="320" cy="192" r="92" fill="#fde68a"/>
+  <circle cx="320" cy="192" r="64" fill="#facc15"/>
+  <rect x="294" y="262" width="52" height="96" rx="20" fill="#92400e"/>
+  <path d="M250 388h140" stroke="#78350f" stroke-width="28" stroke-linecap="round"/>
+  <path d="M228 192c-54-26-54-102 0-128m184 128c54-26 54-102 0-128" stroke="#f59e0b" stroke-width="16" fill="none" stroke-linecap="round" opacity=".55"/>
+  <path d="M280 192h80" stroke="#fff7ed" stroke-width="12" stroke-linecap="round"/>
+  <ellipse cx="320" cy="420" rx="122" ry="18" fill="#92400e" opacity=".14"/>
+</svg>
