@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jdk-alpine AS builder
+FROM eclipse-temurin:21-jdk AS builder
 
 WORKDIR /workspace
 
@@ -11,12 +11,13 @@ COPY src src
 RUN chmod +x gradlew
 
 RUN ./gradlew bootJar --no-daemon
+RUN cp build/libs/*.jar /workspace/app.jar
 
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:21-jdk
 
 WORKDIR /app
 
-COPY --from=builder /workspace/build/libs/log-friends-examples.jar app.jar
+COPY --from=builder /workspace/app.jar app.jar
 
 EXPOSE 8081
 
