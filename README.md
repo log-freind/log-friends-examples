@@ -1,32 +1,53 @@
 # log-friends-examples
 
-Spring Boot example app for verifying the current `log-friends-sdk:v0.3.0` runtime flow against a local Log Friends Console.
+Spring Boot shopping mall demo for verifying the current `log-friends-sdk:v0.3.0` runtime flow against a local Log Friends Console.
 
-The app runs on port `8081` and sends SDK data to Console on port `8080`. It demonstrates:
+The app runs on port `8081`, serves a shop UI at `/` and `/shop`, stores demo data in SQLite, and sends SDK data to Console on port `8080`.
 
-| Domain | Endpoints | Main SDK behavior |
+## What This Example Shows
+
+```text
+Shop UI / REST API
+  -> log-friends-sdk
+  -> Agent registration
+  -> Discovered LOG_EVENT candidates
+  -> HTTP batch POST /ingest
+  -> log-friends-console
+  -> log-friends-console-web
+```
+
+The goal is to make Log Friends visible through a realistic service flow instead of isolated test endpoints.
+
+## Demo Domains
+
+| Domain | Endpoints | Main eventNames |
 |---|---|---|
-| Order | `POST /orders`, `DELETE /orders/{orderId}` | `HTTP`, `LOG`, `JDBC`, `METHOD_TRACE`, `LOG_EVENT`; `orderCreated`, `orderCancelled` |
-| Payment | `POST /payments`, `POST /payments/{txId}/refund` | `LOG_EVENT`; `paymentProcessed`, `paymentRefunded` |
-| User | `POST /users`, `PUT /users/{userId}/deactivate` | `LOG_EVENT`; `userRegistered`, `userDeactivated`, `@LogMasked` email |
+| Catalog | `GET /products`, `GET /products/{productId}` | `catalogProductsListed`, `catalogProductViewed` |
+| Cart | `POST /carts/{cartId}/items`, `DELETE /carts/{cartId}/items/{productId}` | `cartItemAdded`, `cartItemRemoved` |
+| Wishlist | `POST /wishlists/{wishlistId}/items`, `DELETE /wishlists/{wishlistId}/items/{productId}` | `wishlistItemAdded`, `wishlistItemRemoved` |
+| Coupon | `POST /coupons/validate` | `couponValidated` |
+| Order | `POST /orders`, `DELETE /orders/{orderId}`, `POST /orders/{orderId}/return-requests` | `orderCreated`, `orderCancelled`, `returnRequested` |
+| Payment | `POST /payments`, `POST /payments/{transactionId}/refund` | `paymentProcessed`, `paymentRefunded` |
+| Fulfillment | `POST /shipments`, `PUT /shipments/{shipmentId}/status` | `shipmentCreated`, `shipmentStatusChanged` |
+| User | `POST /users`, `PUT /users/{userId}/deactivate` | `userRegistered`, `userDeactivated` |
 
-The Order create flow also inserts into the in-memory H2 `order_audit` table so JDBC capture has a real `PreparedStatement` path.
+The shop UI starts from product browsing and can generate cart, wishlist, coupon, order, payment, and shipment events.
 
 ## Expected Console Flow
 
-Start Console first at `http://localhost:8080`.
-
-```text
-log-friends-examples
-  -> SDK startup Agent registration POST /api/agents
-  -> Discovered LOG_EVENT candidates POST /api/agents/{agentId}/discovered-log-events
-  -> captured event batches POST /ingest
-  -> Console Raw Events, CSV export, Log Catalog
-```
+Start Console backend first at `http://localhost:8080`.
 
 On startup, the SDK registers the fixed `workerId` and `appName` as an Agent. After registration succeeds, SDK `v0.3.0` reports discovered `@LogEvent` candidates with `appVersion=examples-v0.3.0`.
 
-In Console, Log Catalog can show Discovered `LOG_EVENT` candidates and annotation-based LogSpec hints before samples exist. The SDK does not auto-register confirmed LogSpecs; confirmed LogSpecs are created or edited through Console APIs. After you call the example endpoints, `LOG_EVENT` data is stored as Raw Events and becomes available for Log Catalog recent samples, mismatch checks, and Raw Events / CSV verification.
+```text
+log-friends-examples
+  -> POST /api/agents
+  -> POST /api/agents/{agentId}/discovered-log-events
+  -> POST /ingest
+  -> Log Catalog / Raw Events / CSV in Console Web
+```
+
+The SDK does not auto-register confirmed LogSpecs. Confirmed LogSpecs are created or edited through Console APIs. After you use the shop UI or call the APIs, `LOG_EVENT` data is stored as Raw Events and becomes available for Log Catalog samples, mismatch checks, and CSV verification.
 
 ## Configuration
 
@@ -43,13 +64,22 @@ Defaults in `src/main/resources/application.properties` match the same local set
 
 The fixed `workerId` is intentional. Do not generate a new value every run if you want Console Agent metadata, discovered candidates, Raw Events, and Log Catalog data to stay connected.
 
-Required JVM flag:
+SQLite is used for inspectable local demo data:
+
+```text
+EXAMPLES_DATABASE_URL=jdbc:sqlite:build/log-friends-examples.sqlite
+```
+
+`schema.sql` and `data.sql` initialize product and order audit data. Tests use a separate test database setup.
+
+Required JVM flags:
 
 ```text
 -Djdk.attach.allowAttachSelf=true
+-Dnet.bytebuddy.experimental=true
 ```
 
-`bootRun` already sets this flag in Gradle. Pass it explicitly when running the packaged JAR.
+`bootRun` and `test` already set these flags in Gradle. Pass them explicitly when running the packaged JAR.
 
 ## Build And Run
 
@@ -79,67 +109,92 @@ LOGFRIENDS_WORKER_ID=order-service-local-1 \
 LOGFRIENDS_APP_NAME=order-service \
 LOGFRIENDS_APP_VERSION=examples-v0.3.0 \
 java -Djdk.attach.allowAttachSelf=true \
+     -Dnet.bytebuddy.experimental=true \
      -jar build/libs/log-friends-examples.jar
 ```
 
-If Console is not running, the app can still start, but SDK delivery will log failures. For a lightweight receiver:
+If Console is not running, the app can still start, but SDK delivery and agent registration will log failures.
 
-```bash
-python3 scripts/mock_ingest_server.py
+## Use The Shop UI
+
+Open:
+
+```text
+http://localhost:8081/
 ```
 
-Then run the app with `LOGFRIENDS_INGEST_URL=http://127.0.0.1:8089/ingest`.
+Basic demo flow:
 
-## Generate LOG_EVENT Data
+```text
+Browse products
+  -> view a product
+  -> add to wishlist
+  -> add to cart
+  -> validate coupon
+  -> create order
+  -> process payment
+  -> create shipment
+  -> update shipment status
+```
 
-Order:
+This flow generates `LOG_EVENT` records that can be checked in Console Web:
+
+```text
+http://localhost:3000/log-catalog
+http://localhost:3000/raw-events
+```
+
+## Generate LOG_EVENT Data With curl
+
+Product lookup:
 
 ```bash
+curl http://localhost:8081/products
+curl http://localhost:8081/products/PRD-SNK-001
+```
+
+Cart and wishlist:
+
+```bash
+curl -X POST http://localhost:8081/carts/CART-PORTFOLIO/items \
+  -H 'Content-Type: application/json' \
+  -d '{"userId":"USR-1","productId":"PRD-SNK-001","quantity":2,"sourcePage":"product-detail"}'
+
+curl -X POST http://localhost:8081/wishlists/WISH-PORTFOLIO/items \
+  -H 'Content-Type: application/json' \
+  -d '{"userId":"USR-1","productId":"PRD-SNK-001","sourcePage":"product-card"}'
+```
+
+Coupon, order, payment, and shipment:
+
+```bash
+curl -X POST http://localhost:8081/coupons/validate \
+  -H 'Content-Type: application/json' \
+  -d '{"userId":"USR-1","couponCode":"WELCOME10","orderTotal":99000}'
+
 curl -X POST http://localhost:8081/orders \
   -H 'Content-Type: application/json' \
-  -d '{"productId":"PROD-1","quantity":2,"userId":"USR-1","customerEmail":"buyer@example.com","couponCode":"WELCOME10"}'
+  -d '{"productId":"PRD-SNK-001","quantity":2,"userId":"USR-1","customerEmail":"buyer@example.com","couponCode":"WELCOME10","orderTotal":178000,"channel":"WEB"}'
 
-curl -X DELETE 'http://localhost:8081/orders/ORD-1001?reason=changed-mind'
-```
-
-Expected eventNames: `orderCreated`, `orderCancelled`.
-
-`OrderService.create(request: OrderRequest)` sends one top-level payload field named `request`; DTO fields are not flattened. `OrderRequest.customerEmail` is masked as `__MASKED__`.
-
-Payment:
-
-```bash
 curl -X POST http://localhost:8081/payments \
   -H 'Content-Type: application/json' \
-  -d '{"orderId":"ORD-1001","amount":50000,"method":"CARD"}'
+  -d '{"orderId":"ORD-PORTFOLIO-1","amount":50000,"method":"CARD"}'
 
-curl -X POST 'http://localhost:8081/payments/TX-1001/refund?reason=order-cancelled'
-```
-
-Expected eventNames: `paymentProcessed`, `paymentRefunded`.
-
-User:
-
-```bash
-curl -X POST http://localhost:8081/users \
+curl -X POST http://localhost:8081/shipments \
   -H 'Content-Type: application/json' \
-  -d '{"name":"Jane","email":"jane@example.com"}'
-
-curl -X PUT http://localhost:8081/users/USR-1001/deactivate
+  -d '{"orderId":"ORD-PORTFOLIO-1","carrier":"CJ_LOGISTICS","trackingNumber":"TRK-PORTFOLIO-1","shipmentStatus":"READY_TO_SHIP","warehouseCode":"WH-SEOUL"}'
 ```
 
-Expected eventNames: `userRegistered`, `userDeactivated`.
-
-`UserService.register()` masks the `email` parameter as `__MASKED__`.
+`OrderRequest.customerEmail` and selected user fields are masked as `__MASKED__` by SDK annotations.
 
 ## Verify In Console
 
-1. Confirm Agent registration with `GET http://localhost:8080/api/agents`, or by seeing `order-service` in Log Catalog.
-2. Open Log Catalog at `http://localhost:8080/log-catalog`.
-3. Confirm Discovered `LOG_EVENT` candidates and LogSpec hints appear for the example eventNames.
-4. Trigger the curl commands above to create real `LOG_EVENT` Raw Events.
-5. Open Raw Events at `http://localhost:8080/raw-events?appName=order-service&workerId=order-service-local-1`.
-6. Filter by `eventName` if needed, then use the CSV download to verify the full selected date range.
+1. Confirm Agent registration with `GET http://localhost:8080/api/agents`.
+2. Open Console Web at `http://localhost:3000`.
+3. Open Log Catalog and confirm discovered `LOG_EVENT` hints.
+4. Use the shop UI or curl commands to create real `LOG_EVENT` records.
+5. Open Raw Events and filter by `appName=order-service`, `workerId=order-service-local-1`, or `eventName`.
+6. Download CSV from Raw Events to verify the selected date range.
 
 Raw Events API endpoints:
 
@@ -154,7 +209,7 @@ Both endpoints accept `appName`, `workerId`, `eventName`, `from`, and `to`; the 
 
 Example `@LogEvent` names use camelCase. Invalid eventNames are skipped by the SDK and leave a warning in the target app log.
 
-Parameter names become top-level `LOG_EVENT.payload` keys. DTO parameters remain object values, so `OrderRequest` is sent under `request` instead of being flattened into separate top-level fields.
+Parameter names become top-level `LOG_EVENT.payload` keys. DTO parameters remain object values; the SDK does not flatten request DTOs by default.
 
 Console owns Agent records, Raw Event storage, LogSpec confirmation, Log Catalog assembly, mismatch calculation, Field Request state, and CSV export.
 
@@ -164,11 +219,12 @@ Console owns Agent records, Raw Event storage, LogSpec confirmation, Log Catalog
 ./gradlew test
 ```
 
-Controller tests disable the SDK with `logfriends.agent.enabled=false`. `OrderAuditRepositoryTest` covers the H2-backed JDBC example path.
+Controller and service tests cover the shop domains with SDK disabled where needed. Repository tests cover the local JDBC path used by the demo data.
 
 ## Related Docs
 
 - [Example Log Catalog setup](docs/log-catalog.md)
 - `../log-friends-sdk/README.md`
 - `../log-friends-console/README.md`
+- `../log-friends-console-web/README.md`
 - `../docs/system/runtime-flow.md`
