@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="USB-C GaN Charger 65W">
+  <rect width="640" height="480" fill="#f5f3ff"/>
+  <circle cx="92" cy="86" r="46" fill="#06b6d4" opacity=".18"/>
+  <circle cx="552" cy="96" r="64" fill="#6d28d9" opacity=".10"/>
+  <ellipse cx="320" cy="386" rx="210" ry="24" fill="#0f172a" opacity=".10"/>
+<rect x="166" y="112" width="308" height="222" rx="30" fill="#6d28d9"/>
+<rect x="198" y="144" width="244" height="150" rx="18" fill="#ffffff" opacity=".92"/>
+<path d="M236 190h168M236 232h126" stroke="#06b6d4" stroke-width="16" stroke-linecap="round"/>
+<circle cx="404" cy="246" r="28" fill="#ddd6fe"/>
+<path d="M276 334h88l26 42H250l26-42z" fill="#6d28d9" opacity=".86"/>
+<circle cx="484" cy="156" r="34" fill="#06b6d4" opacity=".92"/>
+  <rect x="46" y="36" width="142" height="46" rx="23" fill="#ffffff" opacity=".9"/>
+  <text x="117" y="66" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#6d28d9">UG</text>
+  <text x="320" y="440" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#1f2937">USB-C GaN Charger 65W</text>
+  <text x="320" y="466" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#64748b">PRD-ELC-044</text>
+</svg>

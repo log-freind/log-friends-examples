@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="Longline Down Parka">
+  <rect width="640" height="480" fill="#f0fdf4"/>
+  <circle cx="92" cy="86" r="46" fill="#f97316" opacity=".18"/>
+  <circle cx="552" cy="96" r="64" fill="#15803d" opacity=".10"/>
+  <ellipse cx="320" cy="394" rx="200" ry="24" fill="#0f172a" opacity=".10"/>
+<path d="M226 122l62 48h64l62-48 92 80-56 78-36-30v124H226V250l-36 30-56-78 92-80z" fill="#15803d"/>
+<path d="M288 170l32 68 32-68" fill="none" stroke="#dcfce7" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M320 238v134" stroke="#dcfce7" stroke-width="12" stroke-linecap="round" opacity=".8"/>
+<rect x="246" y="276" width="48" height="54" rx="12" fill="#f97316" opacity=".9"/>
+<rect x="346" y="276" width="48" height="54" rx="12" fill="#f97316" opacity=".9"/>
+  <rect x="46" y="36" width="142" height="46" rx="23" fill="#ffffff" opacity=".9"/>
+  <text x="117" y="66" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#15803d">LD</text>
+  <text x="320" y="440" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#1f2937">Longline Down Parka</text>
+  <text x="320" y="466" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#64748b">PRD-OUT-033</text>
+</svg>

@@ -100,7 +100,7 @@ INSERT INTO products (
     24,
     'RidgeWay',
     4.6,
-    '/assets/products/placeholder.svg',
+    '/assets/products/trail-grip-hiking-shoes.svg',
     'Durable hiking shoes with grippy outsoles for wet and rocky trails.',
     70
 ),
@@ -113,7 +113,7 @@ INSERT INTO products (
     48,
     'StreetForm',
     4.2,
-    '/assets/products/placeholder.svg',
+    '/assets/products/canvas-low-top-sneakers.svg',
     'Clean canvas sneakers with cushioned insoles for everyday outfits.',
     80
 ),
@@ -126,7 +126,7 @@ INSERT INTO products (
     2,
     'Atelier Row',
     4.5,
-    '/assets/products/placeholder.svg',
+    '/assets/products/leather-penny-loafers.svg',
     'Polished leather loafers designed for office wear and dinners out.',
     90
 ),
@@ -139,7 +139,7 @@ INSERT INTO products (
     67,
     'FlexBay',
     4.1,
-    '/assets/products/placeholder.svg',
+    '/assets/products/recovery-slide-sandals.svg',
     'Soft recovery slides with arch support for post-workout comfort.',
     100
 ),
@@ -152,7 +152,7 @@ INSERT INTO products (
     0,
     'HarborMade',
     4.7,
-    '/assets/products/placeholder.svg',
+    '/assets/products/waterproof-chelsea-boots.svg',
     'Weather-ready Chelsea boots with sealed seams and pull tabs.',
     110
 ),
@@ -165,7 +165,7 @@ INSERT INTO products (
     5,
     'MoveLab',
     4.4,
-    '/assets/products/placeholder.svg',
+    '/assets/products/knit-training-sneakers.svg',
     'Breathable knit sneakers built for gym sessions and quick errands.',
     120
 ),
@@ -178,7 +178,7 @@ INSERT INTO products (
     31,
     'Baseline',
     4.3,
-    '/assets/products/placeholder.svg',
+    '/assets/products/classic-court-shoes.svg',
     'Retro court-inspired shoes with a padded collar and rubber cupsole.',
     130
 ),
@@ -191,7 +191,7 @@ INSERT INTO products (
     16,
     'SableWorks',
     4.5,
-    '/assets/products/placeholder.svg',
+    '/assets/products/suede-desert-boots.svg',
     'Soft suede desert boots with lightweight crepe-style soles.',
     140
 ),
@@ -204,7 +204,7 @@ INSERT INTO products (
     1,
     'StepKind',
     4.2,
-    '/assets/products/placeholder.svg',
+    '/assets/products/mesh-walking-shoes.svg',
     'Light mesh walking shoes with a stable heel and flexible forefoot.',
     150
 ),
@@ -217,7 +217,7 @@ INSERT INTO products (
     0,
     'TrackNorth',
     4.8,
-    '/assets/products/placeholder.svg',
+    '/assets/products/premium-running-spikes.svg',
     'Race-day running spikes tuned for speed workouts and track events.',
     160
 ),
@@ -230,7 +230,7 @@ INSERT INTO products (
     22,
     'CarryField',
     4.6,
-    '/assets/products/placeholder.svg',
+    '/assets/products/weekend-duffel-bag.svg',
     'Roomy duffel bag with shoe storage and a padded shoulder strap.',
     170
 ),
@@ -243,7 +243,7 @@ INSERT INTO products (
     39,
     'PocketLane',
     4.3,
-    '/assets/products/placeholder.svg',
+    '/assets/products/minimal-crossbody-pouch.svg',
     'Compact crossbody pouch for phone, keys, wallet, and transit cards.',
     180
 ),
@@ -256,7 +256,7 @@ INSERT INTO products (
     3,
     'Maison Grid',
     4.5,
-    '/assets/products/placeholder.svg',
+    '/assets/products/structured-tote-bag.svg',
     'Structured tote with a laptop sleeve and polished hardware details.',
     190
 ),
@@ -269,7 +269,7 @@ INSERT INTO products (
     17,
     'VeloPack',
     4.7,
-    '/assets/products/placeholder.svg',
+    '/assets/products/roll-top-bike-backpack.svg',
     'Water-resistant roll-top backpack with reflective commuter panels.',
     200
 ),
@@ -282,7 +282,7 @@ INSERT INTO products (
     72,
     'PackWell',
     4.2,
-    '/assets/products/placeholder.svg',
+    '/assets/products/travel-organizer-set.svg',
     'Three-piece organizer set for cables, toiletries, and small gear.',
     210
 ),
@@ -295,7 +295,7 @@ INSERT INTO products (
     0,
     'NobleFold',
     4.4,
-    '/assets/products/placeholder.svg',
+    '/assets/products/leather-card-wallet.svg',
     'Slim leather card wallet with a quick-access front pocket.',
     220
 ),
@@ -308,7 +308,7 @@ INSERT INTO products (
     4,
     'FrameCarry',
     4.8,
-    '/assets/products/placeholder.svg',
+    '/assets/products/camera-sling-bag.svg',
     'Protective camera sling with adjustable dividers and side access.',
     230
 ),
@@ -321,7 +321,7 @@ INSERT INTO products (
     58,
     'ActiveLoop',
     4.0,
-    '/assets/products/placeholder.svg',
+    '/assets/products/gym-drawstring-pack.svg',
     'Light drawstring pack with a ventilated pocket for training gear.',
     240
 ),
@@ -334,7 +334,7 @@ INSERT INTO products (
     12,
     'AeroLuggage',
     4.6,
-    '/assets/products/placeholder.svg',
+    '/assets/products/carry-on-spinner-case.svg',
     'Hard-shell carry-on with quiet spinner wheels and interior dividers.',
     250
 ),
@@ -347,7 +347,7 @@ INSERT INTO products (
     2,
     'LunaVine',
     4.3,
-    '/assets/products/placeholder.svg',
+    '/assets/products/quilted-mini-shoulder-bag.svg',
     'Compact quilted shoulder bag with a chain strap and magnetic flap.',
     260
 ),
@@ -360,7 +360,7 @@ INSERT INTO products (
     34,
     'SoundPeak',
     4.5,
-    '/assets/products/placeholder.svg',
+    '/assets/products/portable-bluetooth-speaker.svg',
     'Portable speaker with deep bass, water resistance, and all-day battery.',
     270
 ),
@@ -373,7 +373,7 @@ INSERT INTO products (
     81,
     'VoltNest',
     4.6,
-    '/assets/products/placeholder.svg',
+    '/assets/products/usb-c-gan-charger-65w.svg',
     'Compact GaN charger with dual USB-C ports for laptops and phones.',
     280
 ),
@@ -386,7 +386,7 @@ INSERT INTO products (
     5,
     'KeyForge',
     4.7,
-    '/assets/products/placeholder.svg',
+    '/assets/products/mechanical-wireless-keyboard.svg',
     'Low-latency wireless keyboard with hot-swap switches and quiet foam.',
     290
 ),
@@ -399,7 +399,7 @@ INSERT INTO products (
     46,
     'CursorLab',
     4.2,
-    '/assets/products/placeholder.svg',
+    '/assets/products/ergonomic-vertical-mouse.svg',
     'Vertical mouse shaped to reduce wrist strain during long workdays.',
     300
 ),
@@ -412,7 +412,7 @@ INSERT INTO products (
     0,
     'Nestory',
     4.1,
-    '/assets/products/placeholder.svg',
+    '/assets/products/smart-home-hub-mini.svg',
     'Compact home hub for lights, sensors, scenes, and voice routines.',
     310
 ),
@@ -425,7 +425,7 @@ INSERT INTO products (
     2,
     'PeakFrame',
     4.5,
-    '/assets/products/placeholder.svg',
+    '/assets/products/4k-action-camera.svg',
     'Rugged 4K action camera with stabilization and waterproof housing.',
     320
 ),
@@ -438,7 +438,7 @@ INSERT INTO products (
     28,
     'PulseArc',
     4.4,
-    '/assets/products/placeholder.svg',
+    '/assets/products/fitness-band-pro.svg',
     'Slim fitness band with health tracking, sleep insights, and GPS sync.',
     330
 ),
@@ -451,7 +451,7 @@ INSERT INTO products (
     15,
     'PrintNest',
     4.3,
-    '/assets/products/placeholder.svg',
+    '/assets/products/compact-photo-printer.svg',
     'Small wireless printer for instant phone photos and travel journals.',
     340
 ),
@@ -464,7 +464,7 @@ INSERT INTO products (
     4,
     'DeskPort',
     4.6,
-    '/assets/products/placeholder.svg',
+    '/assets/products/dual-monitor-dock.svg',
     'USB-C dock with dual display output, Ethernet, and fast charging.',
     350
 ),
@@ -477,7 +477,7 @@ INSERT INTO products (
     0,
     'Readly',
     4.7,
-    '/assets/products/placeholder.svg',
+    '/assets/products/e-reader-glow-7.svg',
     'Seven-inch e-reader with warm front light and weeks of battery life.',
     360
 ),
@@ -490,7 +490,7 @@ INSERT INTO products (
     14,
     'Northline',
     4.7,
-    '/assets/products/placeholder.svg',
+    '/assets/products/wool-blend-overcoat.svg',
     'Tailored wool blend overcoat with a clean silhouette for cold days.',
     370
 ),
@@ -503,7 +503,7 @@ INSERT INTO products (
     26,
     'CloudShell',
     4.4,
-    '/assets/products/placeholder.svg',
+    '/assets/products/lightweight-puffer-vest.svg',
     'Layer-friendly puffer vest with recycled fill and secure pockets.',
     380
 ),
@@ -516,7 +516,7 @@ INSERT INTO products (
     5,
     'SummitLoop',
     4.3,
-    '/assets/products/placeholder.svg',
+    '/assets/products/fleece-zip-jacket.svg',
     'Soft fleece jacket for morning walks, cabins, and casual layering.',
     390
 ),
@@ -529,7 +529,7 @@ INSERT INTO products (
     21,
     'BlueAnchor',
     4.2,
-    '/assets/products/placeholder.svg',
+    '/assets/products/denim-trucker-jacket.svg',
     'Classic denim trucker jacket with sturdy buttons and chest pockets.',
     400
 ),
@@ -542,7 +542,7 @@ INSERT INTO products (
     0,
     'MetroLayer',
     4.5,
-    '/assets/products/placeholder.svg',
+    '/assets/products/reversible-bomber-jacket.svg',
     'Reversible bomber jacket with smooth nylon on one side and quilted lining.',
     410
 ),
@@ -555,7 +555,7 @@ INSERT INTO products (
     2,
     'PolarField',
     4.8,
-    '/assets/products/placeholder.svg',
+    '/assets/products/longline-down-parka.svg',
     'Warm longline parka with down insulation and an adjustable storm hood.',
     420
 ),
@@ -568,7 +568,7 @@ INSERT INTO products (
     19,
     'TrailAxis',
     4.4,
-    '/assets/products/placeholder.svg',
+    '/assets/products/softshell-utility-jacket.svg',
     'Stretch softshell jacket with utility pockets and wind resistance.',
     430
 ),
@@ -581,7 +581,7 @@ INSERT INTO products (
     23,
     'OldMarket',
     4.1,
-    '/assets/products/placeholder.svg',
+    '/assets/products/cropped-harrington-jacket.svg',
     'Cropped Harrington jacket with a plaid lining and neat collar.',
     440
 ),
@@ -594,7 +594,7 @@ INSERT INTO products (
     3,
     'CloudShell',
     4.6,
-    '/assets/products/placeholder.svg',
+    '/assets/products/technical-shell-anorak.svg',
     'Half-zip shell anorak with taped zippers and adjustable cuffs.',
     450
 ),
@@ -607,7 +607,7 @@ INSERT INTO products (
     32,
     'PlainWorks',
     4.2,
-    '/assets/products/placeholder.svg',
+    '/assets/products/linen-blend-chore-coat.svg',
     'Breathable chore coat with roomy patch pockets for transitional weather.',
     460
 ),
@@ -620,7 +620,7 @@ INSERT INTO products (
     44,
     'WarmDesk',
     4.4,
-    '/assets/products/placeholder.svg',
+    '/assets/products/ceramic-aroma-diffuser.svg',
     'Quiet ceramic diffuser with mist control and a soft night light.',
     470
 ),
@@ -633,7 +633,7 @@ INSERT INTO products (
     4,
     'RestHouse',
     4.6,
-    '/assets/products/placeholder.svg',
+    '/assets/products/cotton-percale-sheet-set.svg',
     'Crisp cotton percale sheet set with breathable everyday comfort.',
     480
 ),
@@ -646,7 +646,7 @@ INSERT INTO products (
     63,
     'TidyNorth',
     4.1,
-    '/assets/products/placeholder.svg',
+    '/assets/products/stackable-storage-bins.svg',
     'Stackable storage bins for pantry shelves, closets, and utility rooms.',
     490
 ),
@@ -659,7 +659,7 @@ INSERT INTO products (
     37,
     'TableGrove',
     4.5,
-    '/assets/products/placeholder.svg',
+    '/assets/products/acacia-serving-board.svg',
     'Acacia wood serving board sized for cheese, bread, and appetizers.',
     500
 ),
@@ -672,7 +672,7 @@ INSERT INTO products (
     0,
     'CleanPulse',
     4.3,
-    '/assets/products/placeholder.svg',
+    '/assets/products/cordless-hand-vacuum.svg',
     'Cordless hand vacuum for crumbs, car seats, and tight corners.',
     510
 ),
@@ -685,7 +685,7 @@ INSERT INTO products (
     18,
     'TableGrove',
     4.6,
-    '/assets/products/placeholder.svg',
+    '/assets/products/matte-dinnerware-set.svg',
     'Sixteen-piece matte dinnerware set with dinner plates, bowls, and mugs.',
     520
 ),
@@ -698,7 +698,7 @@ INSERT INTO products (
     5,
     'DeskPort',
     4.4,
-    '/assets/products/placeholder.svg',
+    '/assets/products/adjustable-laptop-stand.svg',
     'Foldable aluminum laptop stand with adjustable height and angle.',
     530
 ),
@@ -711,7 +711,7 @@ INSERT INTO products (
     29,
     'RestHouse',
     4.5,
-    '/assets/products/placeholder.svg',
+    '/assets/products/memory-foam-pillow.svg',
     'Contoured memory foam pillow with a washable cooling cover.',
     540
 ),
@@ -724,7 +724,7 @@ INSERT INTO products (
     42,
     'MonoClock',
     4.0,
-    '/assets/products/placeholder.svg',
+    '/assets/products/minimal-wall-clock.svg',
     'Quiet wall clock with slim markers and a clean matte frame.',
     550
 ),
@@ -737,7 +737,7 @@ INSERT INTO products (
     2,
     'RoomGrid',
     4.7,
-    '/assets/products/placeholder.svg',
+    '/assets/products/modular-bookshelf-unit.svg',
     'Modular bookshelf unit that expands horizontally for living rooms or studies.',
     560
 ),
@@ -750,7 +750,7 @@ INSERT INTO products (
     33,
     'RidgeWay',
     4.1,
-    '/assets/products/placeholder.svg',
+    '/assets/products/all-weather-trek-sandals.svg',
     'Adjustable trek sandals with quick-dry straps and cushioned footbeds.',
     570
 ),
@@ -763,7 +763,7 @@ INSERT INTO products (
     20,
     'UrbanTrail',
     4.4,
-    '/assets/products/placeholder.svg',
+    '/assets/products/expandable-laptop-briefcase.svg',
     'Expandable briefcase with a padded laptop bay and luggage pass-through.',
     580
 ),
@@ -776,7 +776,7 @@ INSERT INTO products (
     3,
     'VoltNest',
     4.2,
-    '/assets/products/placeholder.svg',
+    '/assets/products/wireless-charging-pad-trio.svg',
     'Three-device wireless charging pad for phone, earbuds, and watch.',
     590
 ),
@@ -789,7 +789,7 @@ INSERT INTO products (
     11,
     'HarborMade',
     4.6,
-    '/assets/products/placeholder.svg',
+    '/assets/products/waterproof-field-coat.svg',
     'Waterproof field coat with a corduroy collar and oversized cargo pockets.',
     600
 );

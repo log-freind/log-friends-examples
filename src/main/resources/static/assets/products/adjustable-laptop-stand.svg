@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="Adjustable Laptop Stand">
+  <rect width="640" height="480" fill="#fff7ed"/>
+  <circle cx="92" cy="86" r="46" fill="#14b8a6" opacity=".18"/>
+  <circle cx="552" cy="96" r="64" fill="#9a3412" opacity=".10"/>
+  <ellipse cx="320" cy="390" rx="208" ry="24" fill="#0f172a" opacity=".10"/>
+<rect x="176" y="158" width="288" height="190" rx="30" fill="#fed7aa"/>
+<rect x="218" y="112" width="204" height="118" rx="28" fill="#9a3412"/>
+<circle cx="270" cy="252" r="42" fill="#14b8a6" opacity=".92"/>
+<rect x="330" y="250" width="86" height="72" rx="18" fill="#9a3412" opacity=".86"/>
+<path d="M232 348h176" stroke="#9a3412" stroke-width="18" stroke-linecap="round" opacity=".45"/>
+  <rect x="46" y="36" width="142" height="46" rx="23" fill="#ffffff" opacity=".9"/>
+  <text x="117" y="66" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#9a3412">AL</text>
+  <text x="320" y="440" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#1f2937">Adjustable Laptop Stand</text>
+  <text x="320" y="466" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#64748b">PRD-HOM-040</text>
+</svg>

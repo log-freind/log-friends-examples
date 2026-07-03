@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="Trail Grip Hiking Shoes">
+  <rect width="640" height="480" fill="#eff6ff"/>
+  <circle cx="92" cy="86" r="46" fill="#0f766e" opacity=".18"/>
+  <circle cx="552" cy="96" r="64" fill="#2563eb" opacity=".10"/>
+  <ellipse cx="320" cy="384" rx="220" ry="26" fill="#0f172a" opacity=".10"/>
+  <path d="M108 316c60 20 132 24 216 14 88-10 162-42 218-94 8 38 18 66 30 83 13 18 4 40-18 46-144 36-296 38-462 9-25-4-32-42 16-58z" fill="#2563eb"/>
+  <path d="M164 274c78 31 194 28 280-34l80 12c-86 74-178 108-282 104-63-1-116-9-162-24l84-58z" fill="#ffffff"/>
+  <path d="M182 270l78-78c18-17 43-22 68-12l138 56c-74 56-168 69-284 34z" fill="#0f766e"/>
+  <path d="M220 312l22 28m48-26l22 30m50-34l22 30m50-42l22 28" stroke="#1f2937" stroke-width="11" stroke-linecap="round"/>
+  <path d="M244 218l38 16m35-28l36 16m34 0l36 16" stroke="#ffffff" stroke-width="10" stroke-linecap="round"/>
+  <rect x="46" y="36" width="142" height="46" rx="23" fill="#ffffff" opacity=".9"/>
+  <text x="117" y="66" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#2563eb">TG</text>
+  <text x="320" y="440" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#1f2937">Trail Grip Hiking Shoes</text>
+  <text x="320" y="466" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#64748b">PRD-SHO-002</text>
+</svg>

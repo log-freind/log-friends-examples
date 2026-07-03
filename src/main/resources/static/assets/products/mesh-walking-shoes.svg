@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="Mesh Walking Shoes">
+  <rect width="640" height="480" fill="#eff6ff"/>
+  <circle cx="92" cy="86" r="46" fill="#0f766e" opacity=".18"/>
+  <circle cx="552" cy="96" r="64" fill="#2563eb" opacity=".10"/>
+  <ellipse cx="320" cy="384" rx="220" ry="26" fill="#0f172a" opacity=".10"/>
+<path d="M112 316c58 18 124 22 198 14 94-10 172-43 232-99 7 38 17 65 30 82 13 19 5 42-18 48-145 36-296 39-462 10-25-4-31-43 20-55z" fill="#2563eb"/>
+<path d="M164 274c76 30 194 27 276-32l82 11c-85 73-176 107-280 104-62-1-116-9-162-25l84-58z" fill="#ffffff"/>
+<path d="M182 270l74-74c19-18 43-23 68-13l135 54c-72 54-163 67-277 33z" fill="#0f766e"/>
+<path d="M226 266c50 19 118 21 202 5" stroke="#dbeafe" stroke-width="14" stroke-linecap="round"/>
+<path d="M244 218l38 16m35-28l36 16m34 0l36 16" stroke="#ffffff" stroke-width="10" stroke-linecap="round"/>
+  <rect x="46" y="36" width="142" height="46" rx="23" fill="#ffffff" opacity=".9"/>
+  <text x="117" y="66" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#2563eb">MW</text>
+  <text x="320" y="440" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#1f2937">Mesh Walking Shoes</text>
+  <text x="320" y="466" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#64748b">PRD-SHO-010</text>
+</svg>

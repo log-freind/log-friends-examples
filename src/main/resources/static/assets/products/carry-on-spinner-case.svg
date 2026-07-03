@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="Carry-On Spinner Case">
+  <rect width="640" height="480" fill="#f8fafc"/>
+  <circle cx="92" cy="86" r="46" fill="#f59e0b" opacity=".18"/>
+  <circle cx="552" cy="96" r="64" fill="#334155" opacity=".10"/>
+  <ellipse cx="320" cy="392" rx="190" ry="24" fill="#0f172a" opacity=".10"/>
+<rect x="182" y="154" width="276" height="230" rx="34" fill="#334155"/>
+<path d="M242 164c8-54 43-82 78-82s70 28 78 82" fill="none" stroke="#f59e0b" stroke-width="22" stroke-linecap="round"/>
+<rect x="218" y="205" width="204" height="120" rx="22" fill="#e2e8f0" opacity=".95"/>
+<path d="M250 250h140M250 286h100" stroke="#334155" stroke-width="14" stroke-linecap="round" opacity=".55"/>
+<circle cx="414" cy="350" r="18" fill="#f59e0b"/>
+  <rect x="46" y="36" width="142" height="46" rx="23" fill="#ffffff" opacity=".9"/>
+  <text x="117" y="66" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#334155">CS</text>
+  <text x="320" y="440" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#1f2937">Carry-On Spinner Case</text>
+  <text x="320" y="466" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#64748b">PRD-BAG-023</text>
+</svg>
