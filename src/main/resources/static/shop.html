@@ -80,6 +80,11 @@
           </div>
         </div>
 
+        <div class="catalog-summary" aria-live="polite">
+          <strong id="catalogSummary">Loading products</strong>
+          <span>Product actions generate LOG_EVENT samples for Console Web.</span>
+        </div>
+
         <div id="productGrid" class="product-grid" aria-live="polite"></div>
       </section>
 
@@ -91,11 +96,11 @@
           </div>
           <div id="productDetail" class="product-detail" aria-live="polite"></div>
           <div class="detail-actions">
-            <button id="selectedWish" class="button secondary" type="button" disabled>
+            <button id="selectedWish" class="button secondary" type="button" disabled aria-pressed="false">
               <span aria-hidden="true">&hearts;</span>
               <span>Wish</span>
             </button>
-            <button id="selectedCompare" class="button secondary" type="button" disabled>
+            <button id="selectedCompare" class="button secondary" type="button" disabled aria-pressed="false">
               <span aria-hidden="true">=</span>
               <span>Compare</span>
             </button>

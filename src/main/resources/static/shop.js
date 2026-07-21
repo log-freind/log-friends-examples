@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "minPriceFilter",
     "maxPriceFilter",
     "refreshProducts",
+    "catalogSummary",
     "productDetail",
     "selectedProductName",
     "selectedWish",
@@ -164,12 +165,14 @@ async function loadProducts() {
     }
 
     renderProducts();
+    renderCatalogSummary(path);
     renderProductDetail();
     renderCompareTray();
     renderFlow();
     writeLog("GET " + path, state.products);
   } catch (error) {
     renderProducts();
+    renderCatalogSummary(path, true);
     renderProductDetail();
     writeError("GET " + path, error);
   } finally {
@@ -224,8 +227,8 @@ function renderProducts() {
     const isSoldOut = product.stockStatus === "SOLD_OUT" || remaining <= 0;
 
     node.dataset.productId = product.productId;
-    node.tabIndex = 0;
     node.classList.toggle("selected", product.productId === state.selectedProductId);
+    node.setAttribute("aria-label", `${product.name}, ${formatMoney(product.price)}, ${formatStockWithQuantity(product)}`);
 
     image.addEventListener("error", () => {
       image.src = "/assets/product-fallback.svg";
@@ -264,12 +267,15 @@ function renderProducts() {
       quantity.disabled = true;
       addButton.disabled = true;
       addButton.lastElementChild.textContent = "Sold out";
+      addButton.setAttribute("aria-label", `${product.name} is sold out`);
     } else {
+      addButton.setAttribute("aria-label", `Add ${product.name} to cart`);
       addButton.addEventListener("click", (event) => {
         event.stopPropagation();
         addToCart(product, normalizeQuantity(quantity.value));
       });
     }
+    detailButton.setAttribute("aria-label", `View details for ${product.name}`);
 
     node.addEventListener("click", (event) => {
       if (event.target.closest("button, input, label")) {
@@ -277,17 +283,21 @@ function renderProducts() {
       }
       selectProduct(product.productId, false);
     });
-    node.addEventListener("keydown", (event) => {
-      if (event.target.closest("button, input, label")) {
-        return;
-      }
-      if (event.key === "Enter") {
-        selectProduct(product.productId, false);
-      }
-    });
 
     els.productGrid.append(node);
   });
+}
+
+function renderCatalogSummary(path, failed = false) {
+  if (failed) {
+    els.catalogSummary.textContent = "Product API request failed";
+    return;
+  }
+
+  const count = state.products.length;
+  const categories = new Set(state.products.map((product) => product.category).filter(Boolean));
+  els.catalogSummary.textContent =
+    `${count.toLocaleString()} products · ${categories.size.toLocaleString()} categories · ${path}`;
 }
 
 function renderProductDetail() {
@@ -1099,6 +1109,9 @@ function setWishlistControl(button, product) {
 
   button.disabled = !product || busy;
   button.setAttribute("aria-pressed", String(wished));
+  button.setAttribute("aria-label", product
+    ? `${wished ? "Remove" : "Add"} ${product.name} ${wished ? "from" : "to"} wishlist`
+    : "Wishlist unavailable");
   button.title = wished ? "Remove from wishlist" : "Add to wishlist";
   if (label) {
     label.textContent = wished ? "Wished" : "Wish";
@@ -1111,6 +1124,9 @@ function setCompareControl(button, product) {
 
   button.disabled = !product;
   button.setAttribute("aria-pressed", String(compared));
+  button.setAttribute("aria-label", product
+    ? `${compared ? "Remove" : "Add"} ${product.name} ${compared ? "from" : "to"} compare`
+    : "Compare unavailable");
   button.title = compared ? "Remove from compare" : "Compare product";
   if (label) {
     label.textContent = compared ? "Comparing" : "Compare";
