@@ -40,44 +40,45 @@
             <span class="eyebrow">Catalog</span>
             <h1 id="productsTitle">Products</h1>
           </div>
-          <div class="catalog-controls">
-            <label class="search-field">
-              <span>Search</span>
-              <input id="searchQuery" type="search" placeholder="Product or brand" autocomplete="off">
-            </label>
-            <label>
-              <span>Category</span>
-              <select id="categoryFilter">
-                <option value="">All</option>
-                <option value="shoes">Shoes</option>
-                <option value="bags">Bags</option>
-                <option value="electronics">Electronics</option>
-                <option value="outerwear">Outerwear</option>
-                <option value="home">Home</option>
-              </select>
-            </label>
-            <label>
-              <span>Stock</span>
-              <select id="stockFilter">
-                <option value="">All</option>
-                <option value="IN_STOCK">In stock</option>
-                <option value="LOW_STOCK">Low stock</option>
-                <option value="SOLD_OUT">Sold out</option>
-              </select>
-            </label>
-            <label class="price-field">
-              <span>Min</span>
-              <input id="minPriceFilter" type="number" min="0" step="1000" inputmode="numeric">
-            </label>
-            <label class="price-field">
-              <span>Max</span>
-              <input id="maxPriceFilter" type="number" min="0" step="1000" inputmode="numeric">
-            </label>
-            <button id="refreshProducts" class="button secondary" type="button">
-              <span aria-hidden="true">&#8635;</span>
-              <span>Refresh</span>
-            </button>
-          </div>
+        </div>
+
+        <div class="catalog-controls" aria-label="Product filters">
+          <label class="search-field">
+            <span>Search</span>
+            <input id="searchQuery" type="search" placeholder="Product or brand" autocomplete="off">
+          </label>
+          <label>
+            <span>Category</span>
+            <select id="categoryFilter">
+              <option value="">All</option>
+              <option value="shoes">Shoes</option>
+              <option value="bags">Bags</option>
+              <option value="electronics">Electronics</option>
+              <option value="outerwear">Outerwear</option>
+              <option value="home">Home</option>
+            </select>
+          </label>
+          <label>
+            <span>Stock</span>
+            <select id="stockFilter">
+              <option value="">All</option>
+              <option value="IN_STOCK">In stock</option>
+              <option value="LOW_STOCK">Low stock</option>
+              <option value="SOLD_OUT">Sold out</option>
+            </select>
+          </label>
+          <label class="price-field">
+            <span>Min</span>
+            <input id="minPriceFilter" type="number" min="0" step="1000" inputmode="numeric">
+          </label>
+          <label class="price-field">
+            <span>Max</span>
+            <input id="maxPriceFilter" type="number" min="0" step="1000" inputmode="numeric">
+          </label>
+          <button id="refreshProducts" class="button secondary" type="button">
+            <span aria-hidden="true">&#8635;</span>
+            <span>Refresh</span>
+          </button>
         </div>
 
         <div class="catalog-summary" aria-live="polite">
