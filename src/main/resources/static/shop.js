@@ -1,3 +1,5 @@
+const contextPath = window.location.pathname.startsWith("/examples") ? "/examples" : "";
+
 const fallbackProductImages = {
   "PRD-SNK-001": "/assets/product-sneakers.svg",
   "PRD-BAG-014": "/assets/product-backpack.svg",
@@ -231,9 +233,9 @@ function renderProducts() {
     node.setAttribute("aria-label", `${product.name}, ${formatMoney(product.price)}, ${formatStockWithQuantity(product)}`);
 
     image.addEventListener("error", () => {
-      image.src = "/assets/product-fallback.svg";
+      image.src = withContextPath("/assets/product-fallback.svg");
     }, { once: true });
-    image.src = product.imageUrl || fallbackProductImages[product.productId] || "/assets/product-fallback.svg";
+    image.src = withContextPath(product.imageUrl || fallbackProductImages[product.productId] || "/assets/product-fallback.svg");
     image.alt = product.name;
 
     node.querySelector(".product-category").textContent = product.category;
@@ -323,9 +325,9 @@ function renderProductDetail() {
 
   const image = document.createElement("img");
   image.alt = product.name;
-  image.src = product.imageUrl || fallbackProductImages[product.productId] || "/assets/product-fallback.svg";
+  image.src = withContextPath(product.imageUrl || fallbackProductImages[product.productId] || "/assets/product-fallback.svg");
   image.addEventListener("error", () => {
-    image.src = "/assets/product-fallback.svg";
+    image.src = withContextPath("/assets/product-fallback.svg");
   }, { once: true });
 
   const copy = document.createElement("div");
@@ -948,7 +950,7 @@ async function api(path, options = {}) {
     init.body = JSON.stringify(options.body);
   }
 
-  const response = await fetch(path, init);
+  const response = await fetch(withContextPath(path), init);
   const text = await response.text();
   const data = parseBody(text);
 
@@ -958,6 +960,14 @@ async function api(path, options = {}) {
   }
 
   return data;
+}
+
+function withContextPath(path) {
+  if (!path.startsWith("/")) {
+    return path;
+  }
+
+  return `${contextPath}${path}`;
 }
 
 function parseBody(text) {

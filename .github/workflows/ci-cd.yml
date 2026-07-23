@@ -18,7 +18,7 @@ env:
   IMAGE_NAME: ghcr.io/log-freind/log-friends-examples
   K8S_NAMESPACE: log-friends
   K8S_DEPLOYMENT: log-friends-examples
-  HEALTH_URL: http://127.0.0.1:30081/products
+  HEALTH_URL: http://127.0.0.1/examples/products
 
 jobs:
   build-and-deploy:
