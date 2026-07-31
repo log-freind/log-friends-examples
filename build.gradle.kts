@@ -19,7 +19,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("com.github.log-freind:log-friends-sdk:v0.3.0")
+    implementation("com.github.log-freind:log-friends-sdk:1.0.0")
     runtimeOnly("com.h2database:h2")
     runtimeOnly("org.xerial:sqlite-jdbc:3.49.1.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

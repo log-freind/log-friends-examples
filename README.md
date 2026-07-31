@@ -1,8 +1,14 @@
 # log-friends-examples
 
-Spring Boot shopping mall demo for verifying the current `log-friends-sdk:v0.3.0` runtime flow against a local Log Friends Console.
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Examples CI/CD](https://github.com/log-freind/log-friends-examples/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/log-freind/log-friends-examples/actions/workflows/ci-cd.yml)
+[![JVM](https://img.shields.io/badge/JVM-21-007396.svg)](https://adoptium.net/)
 
-The app runs on port `8081`, serves a shop UI at `/` and `/shop`, stores demo data in SQLite, and sends SDK data to Console on port `8080`.
+Spring Boot shopping mall demo for verifying the stable `log-friends-sdk:1.0.0` runtime flow against a local Log Friends Console.
+
+This is a working service, not a collection of isolated sample methods. Product browsing, cart, wishlist, coupon, order, payment, shipment, and user flows generate events that can be followed from application code to Console storage and contract review.
+
+The app runs on port `8081`, serves a shop UI at `/` and `/shop`, stores demo data in SQLite, and sends SDK data to Console on port `8080`. Under ingress it is also served from `/examples/`.
 
 ## What This Example Shows
 
@@ -17,6 +23,14 @@ Shop UI / REST API
 ```
 
 The goal is to make Log Friends visible through a realistic service flow instead of isolated test endpoints.
+
+```text
+User action in the shop
+  -> annotated service method
+  -> structured eventName + payload
+  -> Console Raw Events
+  -> Log Catalog API context, field descriptions, sample, mismatch
+```
 
 ## Demo Domains
 
@@ -37,7 +51,7 @@ The shop UI starts from product browsing and can generate cart, wishlist, coupon
 
 Start Console backend first at `http://localhost:8080`.
 
-On startup, the SDK registers the fixed `workerId` and `appName` as an Agent. After registration succeeds, SDK `v0.3.0` reports discovered `@LogEvent` candidates with `appVersion=examples-v0.3.0`.
+On startup, the SDK registers the fixed `workerId` and `appName` as an Agent. After registration succeeds, SDK `1.0.0` reports discovered `@LogEvent` candidates with `appVersion=examples-v1.0.0`.
 
 ```text
 log-friends-examples
@@ -57,7 +71,7 @@ Use these values when verifying against local Console:
 export LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest
 export LOGFRIENDS_WORKER_ID=order-service-local-1
 export LOGFRIENDS_APP_NAME=order-service
-export LOGFRIENDS_APP_VERSION=examples-v0.3.0
+export LOGFRIENDS_APP_VERSION=examples-v1.0.0
 ```
 
 Defaults in `src/main/resources/application.properties` match the same local setup except `LOGFRIENDS_APP_NAME`, which falls back to `spring.application.name=order-service`.
@@ -96,7 +110,7 @@ Run with Console:
 LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest \
 LOGFRIENDS_WORKER_ID=order-service-local-1 \
 LOGFRIENDS_APP_NAME=order-service \
-LOGFRIENDS_APP_VERSION=examples-v0.3.0 \
+LOGFRIENDS_APP_VERSION=examples-v1.0.0 \
 ./gradlew bootRun --args='--server.port=8081'
 ```
 
@@ -107,7 +121,7 @@ Run the packaged JAR:
 LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest \
 LOGFRIENDS_WORKER_ID=order-service-local-1 \
 LOGFRIENDS_APP_NAME=order-service \
-LOGFRIENDS_APP_VERSION=examples-v0.3.0 \
+LOGFRIENDS_APP_VERSION=examples-v1.0.0 \
 java -Djdk.attach.allowAttachSelf=true \
      -Dnet.bytebuddy.experimental=true \
      -jar build/libs/log-friends-examples.jar
@@ -121,6 +135,12 @@ Open:
 
 ```text
 http://localhost:8081/
+```
+
+MicroK8s ingress:
+
+```text
+http://<host>/examples/
 ```
 
 Basic demo flow:
@@ -220,6 +240,10 @@ Console owns Agent records, Raw Event storage, LogSpec confirmation, Log Catalog
 ```
 
 Controller and service tests cover the shop domains with SDK disabled where needed. Repository tests cover the local JDBC path used by the demo data.
+
+## Deployment
+
+Pushes to `main` run tests on the NAS self-hosted runner, build an `linux/amd64` image, push commit and `latest` tags to GHCR, restart the MicroK8s Examples Deployment, and verify `/examples/products`.
 
 ## Related Docs
 
