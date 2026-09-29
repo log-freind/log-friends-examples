@@ -1,254 +1,90 @@
-# log-friends-examples
+# Log Friends Examples
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Examples CI/CD](https://github.com/log-freind/log-friends-examples/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/log-freind/log-friends-examples/actions/workflows/ci-cd.yml)
-[![JVM](https://img.shields.io/badge/JVM-21-007396.svg)](https://adoptium.net/)
+**상품을 조회하고 Console에서 실제 수집 결과를 확인할 수 있는 쇼핑몰 예제**입니다.
+SDK 설정, 이벤트 선언, 전송, 저장, 계약 확인까지 한 흐름으로 체험할 수 있습니다.
 
-Spring Boot shopping mall demo for verifying the stable `log-friends-sdk:1.0.0` runtime flow against a local Log Friends Console.
-
-This is a working service, not a collection of isolated sample methods. Product browsing, cart, wishlist, coupon, order, payment, shipment, and user flows generate events that can be followed from application code to Console storage and contract review.
-
-The app runs on port `8081`, serves a shop UI at `/` and `/shop`, stores demo data in SQLite, and sends SDK data to Console on port `8080`. Under ingress it is also served from `/examples/`.
-
-## What This Example Shows
+현재 의존성은 Kotlin SDK **1.1.0**입니다.
+상품·장바구니·찜·쿠폰·주문·결제·배송·사용자 예제를 포함하며, 실제 결제 서비스가 아닌 데모입니다.
 
 ```text
-Shop UI / REST API
-  -> log-friends-sdk
-  -> Agent registration
-  -> Discovered LOG_EVENT candidates
-  -> HTTP batch POST /ingest
-  -> log-friends-console
-  -> log-friends-console-web
+상품 조회 → @LogEvent 메서드 → SDK 큐 → Console → Raw Events / Log Catalog
 ```
 
-The goal is to make Log Friends visible through a realistic service flow instead of isolated test endpoints.
+## 실행하기
 
-```text
-User action in the shop
-  -> annotated service method
-  -> structured eventName + payload
-  -> Console Raw Events
-  -> Log Catalog API context, field descriptions, sample, mismatch
-```
-
-## Demo Domains
-
-| Domain | Endpoints | Main eventNames |
-|---|---|---|
-| Catalog | `GET /products`, `GET /products/{productId}` | `catalogProductsListed`, `catalogProductViewed` |
-| Cart | `POST /carts/{cartId}/items`, `DELETE /carts/{cartId}/items/{productId}` | `cartItemAdded`, `cartItemRemoved` |
-| Wishlist | `POST /wishlists/{wishlistId}/items`, `DELETE /wishlists/{wishlistId}/items/{productId}` | `wishlistItemAdded`, `wishlistItemRemoved` |
-| Coupon | `POST /coupons/validate` | `couponValidated` |
-| Order | `POST /orders`, `DELETE /orders/{orderId}`, `POST /orders/{orderId}/return-requests` | `orderCreated`, `orderCancelled`, `returnRequested` |
-| Payment | `POST /payments`, `POST /payments/{transactionId}/refund` | `paymentProcessed`, `paymentRefunded` |
-| Fulfillment | `POST /shipments`, `PUT /shipments/{shipmentId}/status` | `shipmentCreated`, `shipmentStatusChanged` |
-| User | `POST /users`, `PUT /users/{userId}/deactivate` | `userRegistered`, `userDeactivated` |
-
-The shop UI starts from product browsing and can generate cart, wishlist, coupon, order, payment, and shipment events.
-
-## Expected Console Flow
-
-Start Console backend first at `http://localhost:8080`.
-
-On startup, the SDK registers the fixed `workerId` and `appName` as an Agent. After registration succeeds, SDK `1.0.0` reports discovered `@LogEvent` candidates with `appVersion=examples-v1.0.0`.
-
-```text
-log-friends-examples
-  -> POST /api/agents
-  -> POST /api/agents/{agentId}/discovered-log-events
-  -> POST /ingest
-  -> Log Catalog / Raw Events / CSV in Console Web
-```
-
-The SDK does not auto-register confirmed LogSpecs. Confirmed LogSpecs are created or edited through Console APIs. After you use the shop UI or call the APIs, `LOG_EVENT` data is stored as Raw Events and becomes available for Log Catalog samples, mismatch checks, and CSV verification.
-
-## Configuration
-
-Use these values when verifying against local Console:
-
-```bash
-export LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest
-export LOGFRIENDS_WORKER_ID=order-service-local-1
-export LOGFRIENDS_APP_NAME=order-service
-export LOGFRIENDS_APP_VERSION=examples-v1.0.0
-```
-
-Defaults in `src/main/resources/application.properties` match the same local setup except `LOGFRIENDS_APP_NAME`, which falls back to `spring.application.name=order-service`.
-
-The fixed `workerId` is intentional. Do not generate a new value every run if you want Console Agent metadata, discovered candidates, Raw Events, and Log Catalog data to stay connected.
-
-SQLite is used for inspectable local demo data:
-
-```text
-EXAMPLES_DATABASE_URL=jdbc:sqlite:build/log-friends-examples.sqlite
-```
-
-`schema.sql` and `data.sql` initialize product and order audit data. Tests use a separate test database setup.
-
-Required JVM flags:
-
-```text
--Djdk.attach.allowAttachSelf=true
--Dnet.bytebuddy.experimental=true
-```
-
-`bootRun` and `test` already set these flags in Gradle. Pass them explicitly when running the packaged JAR.
-
-## Build And Run
-
-Build:
-
-```bash
-./gradlew build
-./gradlew bootJar
-```
-
-Run with Console:
+JDK 21이 필요합니다. 먼저 [Console](https://github.com/log-freind/log-friends-console)을
+`http://localhost:8080`에서 실행하세요.
 
 ```bash
 LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest \
 LOGFRIENDS_WORKER_ID=order-service-local-1 \
 LOGFRIENDS_APP_NAME=order-service \
-LOGFRIENDS_APP_VERSION=examples-v1.0.0 \
+LOGFRIENDS_BATCH_SIZE=50 \
 ./gradlew bootRun --args='--server.port=8081'
 ```
 
-Run the packaged JAR:
+브라우저에서 [http://localhost:8081/](http://localhost:8081/)을 열고 상품을 조회합니다.
+쇼핑 화면은 `/shop`에서도 열 수 있습니다.
+
+**현재 Console은 요청당 50건까지 받습니다. 예제의 기본 배치 설정 100을 위 환경변수로 덮어써야 합니다.**
+`bootRun`에는 ByteBuddy에 필요한 JVM 옵션이 설정되어 있습니다.
+
+## 수집됐는지 확인하기
+
+1. 상품 목록을 조회합니다: `curl http://localhost:8081/products`
+2. [Console Web](https://github.com/log-freind/log-friends-console-web)을 실행하고 `http://localhost:3000/raw-events`를 엽니다.
+3. `appName=order-service`, `eventName=catalogProductsListed`로 조회합니다.
+4. Log Catalog에서 코드 힌트와 실제 payload를 비교합니다.
+
+시작 시 SDK가 Agent와 발견된 이벤트 정의를 보고합니다.
+**발견된 정의는 확정된 LogSpec이 아닙니다.** 계약 등록은 [Log Catalog 설정 안내](docs/log-catalog.md)를 참고하세요.
+
+## 코드에서 볼 곳
+
+| 디렉터리 | 확인할 내용 |
+|---|---|
+| [catalog](src/main/kotlin/com/example/demo/catalog) | 상품 조회와 `catalogProductsListed` 이벤트 |
+| [애플리케이션 코드](src/main/kotlin/com/example/demo) | 장바구니·주문 등 도메인별 이벤트 선언 |
+| [application.properties](src/main/resources/application.properties) | SDK 연결과 로컬 DB 설정 |
+
+`@LogEvent`는 이벤트 이름과 설명, `@LogField`는 인자 의미와 필수 여부,
+`@LogMasked`는 민감한 값의 마스킹을 지정합니다.
+DTO 인자는 payload 안에 객체로 들어가며 자동으로 평탄화되지 않습니다.
+
+## 설정
+
+| 환경변수 | 용도 / 기본값 |
+|---|---|
+| `LOGFRIENDS_INGEST_URL` | Console 수집 주소, `http://localhost:8080/ingest` |
+| `LOGFRIENDS_WORKER_ID` | `order-service-local-1` |
+| `LOGFRIENDS_APP_NAME` | 미설정 시 Spring 앱 이름 `order-service` |
+| `LOGFRIENDS_BATCH_SIZE` | 기본 100, 현재 연동에는 **50** 사용 |
+| `LOGFRIENDS_BATCH_INTERVAL_MS` | 500ms |
+| `LOGFRIENDS_QUEUE_CAPACITY` | 10,000건 |
+| `LOGFRIENDS_QUEUE_MEMORY_BUDGET_BYTES` | 32MiB 추정 메모리 예산 |
+| `EXAMPLES_DATABASE_URL` | `jdbc:sqlite:build/log-friends-examples.sqlite` |
+
+같은 인스턴스를 이어서 관찰하려면 `workerId`를 유지하세요.
+여러 인스턴스를 동시에 실행한다면 서로 다른 `workerId`를 지정하세요.
+예제 서비스 데이터는 SQLite에, 수집 이벤트는 Console의 PostgreSQL/TimescaleDB에 저장됩니다.
+
+## 빌드와 테스트
 
 ```bash
-./gradlew bootJar
-LOGFRIENDS_INGEST_URL=http://localhost:8080/ingest \
-LOGFRIENDS_WORKER_ID=order-service-local-1 \
-LOGFRIENDS_APP_NAME=order-service \
-LOGFRIENDS_APP_VERSION=examples-v1.0.0 \
+./gradlew build
+```
+
+패키징한 JAR를 직접 실행할 때는 앞의 SDK 환경변수를 지정하고 다음 JVM 옵션을 전달하세요.
+
+```bash
 java -Djdk.attach.allowAttachSelf=true \
      -Dnet.bytebuddy.experimental=true \
      -jar build/libs/log-friends-examples.jar
 ```
 
-If Console is not running, the app can still start, but SDK delivery and agent registration will log failures.
+Console이 없으면 등록·전송이 실패합니다.
+큐 적재나 SDK의 HTTP 전송 성공만으로 저장 완료를 판단하지 말고 Raw Events에서 확인하세요.
 
-## Use The Shop UI
-
-Open:
-
-```text
-http://localhost:8081/
-```
-
-MicroK8s ingress:
-
-```text
-http://<host>/examples/
-```
-
-Basic demo flow:
-
-```text
-Browse products
-  -> view a product
-  -> add to wishlist
-  -> add to cart
-  -> validate coupon
-  -> create order
-  -> process payment
-  -> create shipment
-  -> update shipment status
-```
-
-This flow generates `LOG_EVENT` records that can be checked in Console Web:
-
-```text
-http://localhost:3000/log-catalog
-http://localhost:3000/raw-events
-```
-
-## Generate LOG_EVENT Data With curl
-
-Product lookup:
-
-```bash
-curl http://localhost:8081/products
-curl http://localhost:8081/products/PRD-SNK-001
-```
-
-Cart and wishlist:
-
-```bash
-curl -X POST http://localhost:8081/carts/CART-PORTFOLIO/items \
-  -H 'Content-Type: application/json' \
-  -d '{"userId":"USR-1","productId":"PRD-SNK-001","quantity":2,"sourcePage":"product-detail"}'
-
-curl -X POST http://localhost:8081/wishlists/WISH-PORTFOLIO/items \
-  -H 'Content-Type: application/json' \
-  -d '{"userId":"USR-1","productId":"PRD-SNK-001","sourcePage":"product-card"}'
-```
-
-Coupon, order, payment, and shipment:
-
-```bash
-curl -X POST http://localhost:8081/coupons/validate \
-  -H 'Content-Type: application/json' \
-  -d '{"userId":"USR-1","couponCode":"WELCOME10","orderTotal":99000}'
-
-curl -X POST http://localhost:8081/orders \
-  -H 'Content-Type: application/json' \
-  -d '{"productId":"PRD-SNK-001","quantity":2,"userId":"USR-1","customerEmail":"buyer@example.com","couponCode":"WELCOME10","orderTotal":178000,"channel":"WEB"}'
-
-curl -X POST http://localhost:8081/payments \
-  -H 'Content-Type: application/json' \
-  -d '{"orderId":"ORD-PORTFOLIO-1","amount":50000,"method":"CARD"}'
-
-curl -X POST http://localhost:8081/shipments \
-  -H 'Content-Type: application/json' \
-  -d '{"orderId":"ORD-PORTFOLIO-1","carrier":"CJ_LOGISTICS","trackingNumber":"TRK-PORTFOLIO-1","shipmentStatus":"READY_TO_SHIP","warehouseCode":"WH-SEOUL"}'
-```
-
-`OrderRequest.customerEmail` and selected user fields are masked as `__MASKED__` by SDK annotations.
-
-## Verify In Console
-
-1. Confirm Agent registration with `GET http://localhost:8080/api/agents`.
-2. Open Console Web at `http://localhost:3000`.
-3. Open Log Catalog and confirm discovered `LOG_EVENT` hints.
-4. Use the shop UI or curl commands to create real `LOG_EVENT` records.
-5. Open Raw Events and filter by `appName=order-service`, `workerId=order-service-local-1`, or `eventName`.
-6. Download CSV from Raw Events to verify the selected date range.
-
-Raw Events API endpoints:
-
-```text
-GET /api/events/custom
-GET /api/events/custom.csv
-```
-
-Both endpoints accept `appName`, `workerId`, `eventName`, `from`, and `to`; the JSON endpoint also accepts `limit`.
-
-## LOG_EVENT Contract Notes
-
-Example `@LogEvent` names use camelCase. Invalid eventNames are skipped by the SDK and leave a warning in the target app log.
-
-Parameter names become top-level `LOG_EVENT.payload` keys. DTO parameters remain object values; the SDK does not flatten request DTOs by default.
-
-Console owns Agent records, Raw Event storage, LogSpec confirmation, Log Catalog assembly, mismatch calculation, Field Request state, and CSV export.
-
-## Tests
-
-```bash
-./gradlew test
-```
-
-Controller and service tests cover the shop domains with SDK disabled where needed. Repository tests cover the local JDBC path used by the demo data.
-
-## Deployment
-
-Pushes to `main` run tests on the NAS self-hosted runner, build an `linux/amd64` image, push commit and `latest` tags to GHCR, restart the MicroK8s Examples Deployment, and verify `/examples/products`.
-
-## Related Docs
-
-- [Example Log Catalog setup](docs/log-catalog.md)
-- `../log-friends-sdk/README.md`
-- `../log-friends-console/README.md`
-- `../log-friends-console-web/README.md`
-- `../docs/system/runtime-flow.md`
+[Kotlin SDK](https://github.com/log-freind/log-friends-kt-sdk) ·
+[Console](https://github.com/log-freind/log-friends-console) ·
+[Console Web](https://github.com/log-freind/log-friends-console-web) · [Apache-2.0](LICENSE)
